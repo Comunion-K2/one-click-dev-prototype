@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Click Dev - AI原生一键开发平台</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --ai: #8b5cf6;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; line-height: 1.6; color: var(--gray-800); background: #f9fafb; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        .navbar { background: white; padding: 16px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .logo { font-size: 1.25rem; font-weight: bold; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-link { color: #6b7280; text-decoration: none; font-weight: 500; }
+        .nav-link:hover { color: var(--primary); }
+        
+        .hero { padding: 100px 0; text-align: center; }
+        .hero-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(135deg, var(--primary), var(--ai)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: 1.25rem; color: #6b7280; max-width: 600px; margin: 0 auto 40px; }
+        
+        .features { padding: 80px 0; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 20px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .feature-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .feature-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--ai)); border-radius: 12px; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; }
+        .feature-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 15px; }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 32px; border-radius: 8px; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #2563eb; }
+        
+        .cta-section { text-align: center; padding: 60px 0; }
+        
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="index.html" class="logo">🚀 One-Click Dev</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">首页</a>
+                <a href="pages/requirement-analysis.html" class="nav-link">需求分析</a>
+                <a href="#" class="nav-link">界面生成</a>
+                <a href="#" class="nav-link">PRD生成</a>
+                <a href="#" class="nav-link">更多功能</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero">
+            <h1 class="hero-title">对话即开发</h1>
+            <p class="hero-subtitle">
+                描述你的产品想法，AI自动完成从需求分析到部署上线的完整开发流程。<br>
+                非技术用户也能创建专业应用，开发从未如此简单。
+            </p>
+            <a href="pages/requirement-analysis.html" class="btn">🚀 立即开始体验</a>
+        </section>
+
+        <!-- 核心功能 -->
+        <section class="features">
+            <h2 class="section-title">9大核心功能</h2>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 40px;">
+                从需求分析到发布运维，One-Click Dev覆盖完整开发流程
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">1</div>
+                    <h3 class="feature-title">一键需求分析</h3>
+                    <p>通过对话分析用户需求，使用5W1H方法生成结构化需求文档。</p>
+                    <a href="pages/requirement-analysis.html" class="btn" style="margin-top: 20px; padding: 8px 20px; font-size: 0.875rem;">体验此功能</a>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">2</div>
+                    <h3 class="feature-title">一键界面生成</h3>
+                    <p>自动生成响应式Web/H5界面，考虑UE/UX设计、SEO优化、GEO适配。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">3</div>
+                    <h3 class="feature-title">一键生成PRD</h3>
+                    <p>生成完整的产品需求文档，包含技术文档、SEO/GEO文档、结构地图。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">4</div>
+                    <h3 class="feature-title">一键开发</h3>
+                    <p>基于PRD自动生成完整项目代码，支持多种技术栈，配置开发环境。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">5</div>
+                    <h3 class="feature-title">一键测试</h3>
+                    <p>自动化生成和执行测试，包括单元测试、集成测试、E2E测试。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">6</div>
+                    <h3 class="feature-title">一键bug修复</h3>
+                    <p>自动检测和修复代码问题，包括语法错误、逻辑错误、性能问题。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">7</div>
+                    <h3 class="feature-title">一键发布</h3>
+                    <p>支持多种部署方式，自动配置域名和SSL证书，CDN加速。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">8</div>
+                    <h3 class="feature-title">一键绑定消息通知</h3>
+                    <p>集成Telegram、短信、邮件等多种通知渠道，实时监控应用状态。</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">9</div>
+                    <h3 class="feature-title">一键回滚</h3>
+                    <p>快速安全地回滚到之前版本，支持代码、数据库、配置的多维度回滚。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA区域 -->
+        <section class="cta-section">
+            <h2 style="font-size: 2rem; margin-bottom: 20px;">准备好开始了吗？</h2>
+            <p style="color: #6b7280; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                从需求分析开始，体验AI如何改变开发流程
+            </p>
+            <a href="pages/requirement-analysis.html" class="btn" style="padding: 15px 40px; font-size: 1.125rem;">
+                🚀 开始第一个功能：需求分析
+            </a>
+        </section>
+    </div>
+
+    <footer style="background: #111827; color: white; padding: 40px 0; margin-top: 80px;">
+        <div class="container" style="text-align: center;">
+            <h3 style="margin-bottom: 20px;">🚀 One-Click Dev</h3>
+            <p style="color: #9ca3af; margin-bottom: 20px;">让AI原生开发像点按钮一样简单</p>
+            <p style="color: #6b7280; font-size: 0.875rem;">
+                © 2026 Apexunit. 保留所有权利。 | 🇨🇳 中国上海
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

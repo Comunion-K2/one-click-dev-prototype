@@ -2,11 +2,15 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/prototype/one-click-dev-standalone.html"
+      "destination": "/prototype/index.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/prototype/$1"
+      "source": "/pages/:path*",
+      "destination": "/prototype/pages/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/prototype/:path*"
     }
   ],
   "headers": [

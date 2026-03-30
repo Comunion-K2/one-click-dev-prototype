@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专业需求分析引擎 | One-Click Dev</title>
+    <style>
+        :root {
+            --ai-primary: #8b5cf6;
+            --ai-secondary: #3b82f6;
+            --ai-success: #10b981;
+            --ai-warning: #f59e0b;
+            --ai-danger: #ef4444;
+            --ai-info: #3b82f6;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; line-height: 1.6; color: #1f2937; background: #f9fafb; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        
+        /* 专业头部 */
+        .pro-header { 
+            background: linear-gradient(135deg, #111827, #374151);
+            color: white; 
+            padding: 80px 0; 
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .pro-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(139, 92, 246, 0.1)"/></svg>');
+            background-size: cover;
+        }
+        .pro-title { font-size: 3rem; font-weight: 800; margin-bottom: 20px; position: relative; }
+        .pro-subtitle { font-size: 1.25rem; opacity: 0.9; max-width: 800px; margin: 0 auto; position: relative; }
+        
+        /* 智能输入区域 */
+        .smart-input-section { padding: 60px 0; }
+        .section-title { font-size: 2rem; margin-bottom: 40px; color: #111827; text-align: center; }
+        .section-subtitle { text-align: center; color: #6b7280; margin-bottom: 40px; max-width: 800px; margin-left: auto; margin-right: auto; }
+        
+        .input-container { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            padding: 50px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .input-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .input-title { font-size: 1.5rem; font-weight: 700; color: #111827; }
+        .input-mode { display: flex; gap: 10px; }
+        .mode-btn { 
+            padding: 8px 16px; 
+            background: #f3f4f6; 
+            border: none; 
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .mode-btn.active { 
+            background: var(--ai-primary); 
+            color: white;
+        }
+        
+        .smart-textarea { 
+            width: 100%; 
+            min-height: 200px; 
+            padding: 25px; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-family: inherit;
+            resize: vertical;
+            line-height: 1.8;
+            transition: all 0.3s;
+        }
+        .smart-textarea:focus { 
+            outline: none; 
+            border-color: var(--ai-primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+        .smart-textarea::placeholder { color: #9ca3af; }
+        
+        .input-hints { 
+            background: #f0f9ff; 
+            padding: 20px; 
+            border-radius: 12px;
+            margin-top: 25px;
+            border-left: 4px solid var(--ai-primary);
+        }
+        .hints-title { font-weight: 600; margin-bottom: 10px; color: #374151; }
+        .hints-list { color: #6b7280; font-size: 0.875rem; }
+        .hints-list li { margin-bottom: 8px; }
+        
+        /* AI分析过程 */
+        .ai-analysis-section { 
+            padding: 60px 0; 
+            display: none;
+        }
+        .ai-analysis-section.active { display: block; }
+        
+        .analysis-process { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .analysis-process::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ai-primary), var(--ai-secondary), var(--ai-success));
+        }
+        
+        .process-steps { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 30px;
+            margin: 40px 0;
+        }
+        .process-step { 
+            text-align: center; 
+            padding: 25px;
+            background: #f8fafc;
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        .process-step.completed { 
+            background: #f0fdf4; 
+            border: 2px solid var(--ai-success);
+            transform: translateY(-5px);
+        }
+        .process-step.active { 
+            background: #f0f9ff; 
+            border: 2px solid var(--ai-primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+        }
+        .step-number { 
+            width: 40px; height: 40px; 
+            background: #e5e7eb; 
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+        .process-step.completed .step-number { 
+            background: var(--ai-success); 
+            color: white;
+        }
+        .process-step.active .step-number { 
+            background: var(--ai-primary); 
+            color: white;
+        }
+        .step-title { font-weight: 600; margin-bottom: 10px; color: #111827; }
+        .step-desc { font-size: 0.875rem; color: #6b7280; }
+        
+        .current-analysis { 
+            background: #f8fafc; 
+            padding: 30px; 
+            border-radius: 12px;
+            margin-top: 30px;
+            border-left: 4px solid var(--ai-primary);
+        }
+        .analysis-title { font-weight: 600; margin-bottom: 15px; color: #374151; font-size: 1.125rem; }
+        .analysis-content { color: #6b7280; line-height: 1.8; }
+        
+        /* 专业分析结果 */
+        .pro-results-section { 
+            padding: 60px 0; 
+            display: none;
+        }
+        .pro-results-section.active { display: block; }
+        
+        .results-container { 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .results-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--ai-success), var(--ai-primary));
+        }
+        
+        .results-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .results-title { font-size: 1.75rem; font-weight: 700; color: #111827; }
+        .results-actions { display: flex; gap: 15px; }
+        
+        /* 分析维度网格 */
+        .analysis-dimensions { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        .dimension-card { 
+            background: #f8fafc; 
+            padding: 30px; 
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            transition: all 0.3s;
+        }
+        .dimension-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: var(--ai-primary);
+        }
+        .dimension-header { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .dimension-icon { 
+            width: 50px; height: 50px; 
+            background: linear-gradient(135deg, var(--ai-primary), var(--ai-secondary));
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .dimension-title { font-size: 1.25rem; font-weight: 700; color: #111827; }
+        
+        .dimension-content { color: #6b7280; line-height: 1.8; }
+        .dimension-list { margin-top: 15px; }
+        .dimension-list li { 
+            margin-bottom: 10px; 
+            padding-left: 20px;
+            position: relative;
+        }
+        .dimension-list li::before {
+            content: '•';
+            color: var(--ai-primary);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        
+        /* SWOT分析 */
+        .swot-analysis { 
+            background: #f8fafc; 
+            padding: 40px; 
+            border-radius: 16px;
+            margin-bottom: 40px;
+            border: 1px solid #e5e7eb;
+        }
+        .swot-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 30px; color: #111827; text-align: center; }
+        .swot-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 25px;
+        }
+        .swot-quadrant { 
+            padding: 25px; 
+            border-radius: 12px;
+            border: 2px solid transparent;
+        }
+        .swot-quadrant.opportunities { 
+            background: #f0fdf4; 
+            border-color: var(--ai-success);
+        }
+        .swot-quadrant.strengths { 
+            background: #f0f9ff; 
+            border-color: var(--ai-primary);
+        }
+        .swot-quadrant.weaknesses { 
+            background: #fef3c7; 
+            border-color: var(--ai-warning);
+        }
+        .swot-quadrant.threats { 
+            background: #fee2e2; 
+            border-color: var(--ai-danger);
+        }
+        .quadrant-title { 
+            font-weight: 700; 
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 专业文档输出 */
+        .documents-output { 
+            background: #f8fafc; 
+            padding: 40px; 
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+        }
+        .documents-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 30px; color: #111827; }
+        .documents-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px;
+        }
+        .document-card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .document-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: var(--ai-primary);
+        }
+        .document-icon { 
+            font-size: 2.5rem; 
+            margin-bottom: 15px;
+            color: var(--ai-primary);
+        }
+        .document-name { font-weight: 600; margin-bottom: 10px; color: #111827; }
+        .document-desc { font-size: 0.875rem; color: #6b7280; }
+        
+        /* 按钮 */
+        .pro-btn { 
+            background: linear-gradient(135deg, var(--ai-primary), var(--ai-secondary)); 
+            color: white; 
+            border: none; 
+            padding: 16px 40px; 
+            border-radius: 12px; 
+            font-size: 1.125rem; 
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .pro-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+        }
+        .pro-btn:disabled { 
+            background: #9ca3af; 
+            cursor: not-allowed; 
+            transform: none; 
+            box-shadow: none;
+        }
+        .pro-btn-secondary { 
+            background: #e5e7eb; 
+            color: #374151; 
+        }
+        .pro-btn-secondary:hover { background: #d1d5db; }
+        
+        .action-buttons { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center; 
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .analysis-dimensions { grid-template-columns: 1fr; }
+            .swot-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .pro-title { font-size: 2.5rem; }
+            .input-container, .analysis-process, .results-container { padding: 30px 20px; }
+            .action-buttons { flex-direction: column; }
+            .documents-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 专业头部 -->
+    <div class="pro-header">
+        <div class="container">
+            <h1 class="pro-title">🤖 专业需求分析引擎</h1>
+            <p class="pro-subtitle">AI深度分析你的需求，提供专业的产品洞察、商业评估和技术建议。从简单描述到完整方案，一键生成。</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 智能输入区域 -->
+        <section class="smart-input-section" id="inputSection">
+            <h2 class="section-title">💡 描述你的产品想法</h2>
+            <p class="section-subtitle">
+                用自然语言描述你的产品想法，AI将进行深度分析并提供专业建议。
+            </p>
+            
+            <div class="input-container">
+                <div class="input-header">
+                    <div class="input-title">智能需求输入</div>
+                    <div class="input-mode">
+                        <button class="mode-btn active" data-mode="text">📝 文本描述</button>
+                        <button class="mode-btn" data-mode="voice">🎤 语音输入</button>
+                        <button class="mode-btn" data-mode="upload">📎 上传文档</button>
+                    </div>
+                </div>
+                
+                <textarea class="smart-textarea" id="smartInput" placeholder="例如：我想做一个智能会员管理系统，帮助中小商家管理会员信息、积分、优惠券，同时提供数据分析功能。目标用户是零售店、餐饮店、美容院等中小商家。需要支持微信小程序和Web后台。">我想做一个智能会员管理系统，帮助

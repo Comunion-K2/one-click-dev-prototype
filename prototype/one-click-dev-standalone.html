@@ -733,23 +733,27 @@
     <!-- 顶部导航 -->
     <nav class="navbar">
         <div class="container navbar-content">
-            <a href="#" class="logo">
+            <a href="#" class="logo" data-page="home">
                 <div class="logo-icon">OCD</div>
                 <span>One-Click Dev</span>
             </a>
             
             <div class="nav-links">
-                <a href="#features" class="nav-link">功能</a>
-                <a href="#demo" class="nav-link">演示</a>
-                <a href="#tech" class="nav-link">技术栈</a>
-                <a href="#pricing" class="nav-link">定价</a>
+                <a href="#" class="nav-link active" data-page="home">首页</a>
+                <a href="#" class="nav-link" data-page="features-page">功能详情</a>
+                <a href="#" class="nav-link" data-page="demo-page">完整演示</a>
+                <a href="#" class="nav-link" data-page="pricing-page">定价</a>
+                <a href="#" class="nav-link" data-page="contact-page">联系我们</a>
             </div>
             
             <div>
-                <button class="btn btn-primary">免费开始</button>
+                <button class="btn btn-primary" id="startBtn">免费开始</button>
             </div>
         </div>
     </nav>
+    
+    <!-- 首页内容 -->
+    <div id="home" class="page">
 
     <!-- 英雄区域 -->
     <section class="hero">
@@ -1192,6 +1196,7 @@
             </div>
         </div>
     </footer>
+    </div> <!-- 首页内容结束 -->
 
     <script>
         // 交互脚本
@@ -1296,7 +1301,117 @@
             const userLanguage = navigator.language || navigator.userLanguage;
             const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             console.log('用户语言:', userLanguage, '时区:', userTimezone);
+            
+            // 页面切换功能
+            function showPage(pageId) {
+                // 隐藏所有页面
+                document.querySelectorAll('.page').forEach(page => {
+                    page.style.display = 'none';
+                });
+                
+                // 显示目标页面
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    targetPage.style.display = 'block';
+                }
+                
+                // 更新导航激活状态
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                event.target.classList.add('active');
+                
+                // 更新浏览器URL（不刷新页面）
+                history.pushState({page: pageId}, '', `#${pageId}`);
+            }
+            
+            // 初始化显示首页
+            showPage('home');
+            
+            // 监听浏览器前进后退
+            window.addEventListener('popstate', function(event) {
+                if (event.state && event.state.page) {
+                    showPage(event.state.page);
+                } else {
+                    showPage('home');
+                }
+            });
+            
+            // 为导航链接添加点击事件
+            document.querySelectorAll('[data-page]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    showPage(pageId);
+                });
+            });
+            
+            // 演示：模拟功能页面内容
+            console.log('One-Click Dev原型已加载！');
+            console.log('可用功能页面: home, features, demo, pricing, contact');
         });
     </script>
+    
+    <!-- 功能页面内容 -->
+    <div id="features-page" class="page" style="display: none;">
+        <div class="container" style="padding: 80px 0;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 40px;">🚀 9大核心功能详情</h1>
+            
+            <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: var(--shadow-lg);">
+                <h2 style="color: var(--primary-600); margin-bottom: 30px;">1. 一键需求分析</h2>
+                <p style="margin-bottom: 20px; line-height: 1.8;">
+                    <strong>工作流程:</strong><br>
+                    1. 用户通过对话描述需求<br>
+                    2. AI使用5W1H方法分析<br>
+                    3. 生成结构化需求文档<br>
+                    4. 创建用户故事和用例
+                </p>
+                
+                <h2 style="color: var(--primary-600); margin-bottom: 30px;">2. 一键界面生成</h2>
+                <p style="margin-bottom: 20px; line-height: 1.8;">
+                    <strong>技术特性:</strong><br>
+                    • 响应式设计（移动端优先）<br>
+                    • SEO优化（meta标签、结构化数据）<br>
+                    • GEO适配（多语言、时区）<br>
+                    • 实时预览和调整
+                </p>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <button onclick="showPage('home')" class="btn btn-primary">
+                        ← 返回首页
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="demo-page" class="page" style="display: none;">
+        <div class="container" style="padding: 80px 0;">
+            <h1 style="font-size: 2.5rem; margin-bottom: 40px;">🎬 完整演示流程</h1>
+            
+            <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: var(--shadow-lg);">
+                <h3 style="color: var(--ai-600); margin-bottom: 20px;">第1步: 需求对话</h3>
+                <div style="background: var(--gray-50); padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                    <strong>用户:</strong> 我想创建一个在线待办事项应用<br>
+                    <strong>AI:</strong> 正在分析... 生成用户故事中...
+                </div>
+                
+                <h3 style="color: var(--ai-600); margin-bottom: 20px;">第2步: 界面生成</h3>
+                <div style="background: var(--gray-50); padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+                    <strong>生成内容:</strong><br>
+                    • 任务列表界面<br>
+                    • 添加任务表单<br>
+                    • 优先级标记系统<br>
+                    • 完成状态管理
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <button onclick="showPage('home')" class="btn btn-primary">
+                        ← 返回首页
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

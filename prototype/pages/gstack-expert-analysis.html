@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>gstack专家需求分析 - One-Click Dev</title>
+    <style>
+        :root {
+            --ceo: #ef4444;      /* 红色 - CEO战略 */
+            --eng: #3b82f6;      /* 蓝色 - 工程 */
+            --product: #8b5cf6;  /* 紫色 - 产品 */
+            --qa: #10b981;       /* 绿色 - 质量 */
+            --docs: #f59e0b;     /* 橙色 - 文档 */
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; line-height: 1.6; color: #1f2937; background: #f9fafb; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        .gstack-header { background: linear-gradient(135deg, #111827, #374151); color: white; padding: 60px 0; }
+        .gstack-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; }
+        .gstack-subtitle { font-size: 1.125rem; opacity: 0.9; max-width: 800px; margin: 0 auto; }
+        .expert-badges { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+        .expert-badge { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-ceo { background: var(--ceo); }
+        .badge-eng { background: var(--eng); }
+        .badge-product { background: var(--product); }
+        .badge-qa { background: var(--qa); }
+        .badge-docs { background: var(--docs); }
+        
+        .real-scenario { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 40px 0; }
+        .scenario-title { font-size: 1.5rem; margin-bottom: 20px; color: #111827; }
+        .scenario-card { background: #f8fafc; padding: 25px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--eng); }
+        
+        .analysis-form { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 40px 0; }
+        .form-title { font-size: 1.5rem; margin-bottom: 30px; color: #111827; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; font-weight: 600; margin-bottom: 10px; color: #374151; }
+        .form-input, .form-textarea { width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; font-family: inherit; }
+        .form-textarea { min-height: 100px; resize: vertical; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--eng); }
+        
+        .expert-panel { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 40px 0; display: none; }
+        .panel-title { font-size: 1.5rem; margin-bottom: 30px; color: #111827; }
+        .expert-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .expert-card { border: 2px solid #e5e7eb; border-radius: 8px; padding: 25px; }
+        .expert-header { display: flex; align-items: center; margin-bottom: 15px; }
+        .expert-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; margin-right: 15px; }
+        .expert-name { font-weight: 600; }
+        .expert-analysis { color: #6b7280; font-size: 0.875rem; }
+        
+        .gstack-process { background: #f8fafc; padding: 30px; border-radius: 8px; margin: 30px 0; }
+        .process-title { font-size: 1.25rem; margin-bottom: 20px; color: #111827; }
+        .process-steps { display: flex; flex-direction: column; gap: 15px; }
+        .process-step { display: flex; align-items: center; }
+        .step-number { width: 24px; height: 24px; background: var(--eng); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; margin-right: 15px; }
+        
+        .solution-section { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 40px 0; display: none; }
+        .solution-title { font-size: 1.5rem; margin-bottom: 20px; color: #111827; }
+        .solution-card { background: #f0f9ff; padding: 25px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--product); }
+        .solution-problem { font-weight: 600; color: var(--ceo); margin-bottom: 10px; }
+        
+        .btn { background: var(--eng); color: white; border: none; padding: 12px 32px; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; }
+        .btn:hover { background: #2563eb; }
+        .btn-ceo { background: var(--ceo); }
+        .btn-ceo:hover { background: #dc2626; }
+        
+        .thinking { background: #fef3c7; padding: 20px; border-radius: 8px; margin: 20px 0; display: none; }
+        .thinking-text { color: #d97706; font-weight: 500; }
+        
+        @media (max-width: 768px) {
+            .form-grid { grid-template-columns: 1fr; }
+            .expert-cards { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="gstack-header">
+        <div class="container">
+            <h1 class="gstack-title">🧠 gstack专家需求分析</h1>
+            <p class="gstack-subtitle">调用15个gstack专家角色，进行专业级5W1H分析，产出可执行解决方案</p>
+            <div class="expert-badges">
+                <span class="expert-badge badge-ceo">CEO战略分析</span>
+                <span class="expert-badge badge-eng">工程技术评估</span>
+                <span class="expert-badge badge-product">产品方案设计</span>
+                <span class="expert-badge badge-qa">质量风险评估</span>
+                <span class="expert-badge badge-docs">文档规范输出</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 真实场景示例 -->
+        <div class="real-scenario">
+            <h2 class="scenario-title">🎯 正确使用5W1H的示例</h2>
+            
+            <div class="scenario-card">
+                <p><strong>Who（谁）：</strong> 小王，25岁，互联网公司上班族</p>
+                <p><strong>Where（在哪里）：</strong> 下班回家的地铁上</p>
+                <p><strong>When（在什么时候）：</strong> 晚上8点，加班后</p>
+                <p><strong>What（做什么事）：</strong> 用手机点外卖</p>
+                <p><strong>How（怎么做）：</strong> 打开美团APP，浏览餐厅，下单支付</p>
+                <p><strong>Why（痛点）：</strong> 饿了，没时间做饭，想快速吃到热饭</p>
+                <p><strong>💡 你的产品能解决：</strong> 提供更快的配送、更健康的餐食选择、更优惠的价格</p>
+            </div>
+            
+            <p style="color: #6b7280; margin-top: 15px;">👉 现在，请按照这个格式描述你的需求场景</p>
+        </div>
+
+        <!-- 5W1H分析表单 -->
+        <div class="analysis-form">
+            <h2 class="form-title">🔍 5W1H场景分析</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label">Who - 谁（用户角色）</label>
+                    <input type="text" class="form-input" id="inputWho" placeholder="例如：小王，25岁，互联网产品经理" value="小李，28岁，中小电商企业主">
+                    <div style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">描述具体的用户画像，不是模糊的"用户"</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Where - 在哪里（使用场景）</label>
+                    <input type="text" class="form-input" id="inputWhere" placeholder="例如：公司办公室、家里、通勤路上" value="公司办公室，使用电脑管理店铺">
+                    <div style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">具体的物理或数字环境</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">When - 在什么时候</label>
+                    <input type="text" class="form-input" id="inputWhen" placeholder="例如：每天上午9点、周末晚上" value="每天营业时间（9:00-21:00），特别是订单高峰期">
+                    <div style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">具体的时间点或时间段</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">What - 做什么事</label>
+                    <textarea class="form-textarea" id="inputWhat" placeholder="详细描述用户要完成的具体任务...">管理店铺会员，包括：查看会员信息、手动计算积分、发放优惠券、处理会员咨询</textarea>
+                    <div style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">具体的行为，不是抽象的目标</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">How - 怎么做（当前方式）</label>
+                    <textarea class="form-textarea" id="inputHow" placeholder="用户现在是如何完成这个任务的？">使用Excel表格记录会员信息，人工计算积分，通过微信单独联系会员发放优惠，客服重复回答相同问题</textarea>
+                    <div style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">现有的解决方案或工作流程</div>
+                </div>
+                
+                <div class="form-group" style="grid-column: 1 / -1;">
+                    <label class="form-label">💡 你的产品/功能设想</label>
+                    <textarea class="form-textarea" id="inputSolution" placeholder="你希望开发什么产品来解决这个问题？" style="min-height: 120px;">一个智能会员管理系统，自动管理会员信息、积分计算、优惠券发放，并提供智能客服回答常见问题</textarea>
+                    <div style="font-size: 0.875rem; color: #6b7280; margin-top: 5px;">你的解决方案设想</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-ceo" id="analyzeBtn">🚀 调用gstack专家团队分析</button>
+            
+            <div class="thinking" id="thinkingIndicator">
+                <div class="thinking-text">🧠 正在调用gstack专家团队：CEO战略分析 → 工程技术评估 → 产品方案设计 → 质量风险评估 → 文档规范输出</div>
+            </div>
+        </div>
+
+        <!-- gstack专家分析过程 -->
+        <div class="expert-panel" id="expertPanel">
+            <h2 class="panel-title">👥 gstack专家团队分析中</h2>
+            
+            <div class="gstack-process">
+                <h3 class="process-title">🔄 gstack专家协作流程</h3>
+                <div class="process-steps">
+                    <div class="process-step">
+                        <div class="step-number">1</div>
+                        <span><strong>gstack:ceo</strong> - 战略价值分析</span>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">2</div>
+                        <span><strong>gstack:eng</strong> - 技术可行性评估</span>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">3</div>
+                        <span><strong>gstack:review</strong> - 方案审查优化</span>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">4</div>
+                        <span><strong>gstack:qa</strong> - 质量风险识别</span>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">5</div>
+                        <span><strong>gstack:docs</strong> - 文档规范输出</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="expert-cards">
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: var(--ceo);">CEO</div>
+                        <div class="expert-name">战略专家 (gstack:ceo)</div>
+                    </div>
+                    <div class="expert-analysis">
+                        <p><strong>分析结论：</strong> 中小电商会员管理是明确的市场需求，但需聚焦核心场景。</p>
+                        <p><strong>建议：</strong> 先解决积分自动计算和优惠券发放，暂不考虑复杂的CRM功能。</p>
+                        <p><strong>商业价值：</strong> 可节省商家30%的运营时间，提升客户复购率15-20%。</p>
+                    </div>
+                </div>
+                
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: var(--eng);">ENG</div>
+                        <div class="expert-name">工程专家 (gstack:eng)</div>
+                    </div>
+                    <div class="expert-analysis">
+                        <p><strong>技术评估：</strong> 中等复杂度，核心是积分计算引擎和实时数据同步。</p>
+                        <p><strong>技术栈：</strong> React + Node.js + PostgreSQL，微服务架构。</p>
+                        <p><strong>开发周期：</strong> MVP 8周，完整版本16周。</p>
+                        <p><strong>难点：</strong> 高并发下的积分计算性能，数据一致性保证。</p>
+                    </div>
+                </div>
+                
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: var(--product);">PD</div>
+                        <div class="expert-name">产品专家 (gstack:product)</div>
+                    </div>
+                    <div class="expert-analysis">
+                        <p><strong>用户痛点分析：</strong> 人工管理效率低、易出错、无法规模化。</p>
+                        <p><strong>核心功能：</strong> 1) 会员信息管理 2) 自动积分计算 3) 优惠券系统 4) 基础报表。</p>
+                        <p><strong>用户体验：</strong> 需要极简操作，一键式功能，减少学习成本。</p>
+                    </div>
+                </div>
+                
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: var(--qa);">QA</div>
+                        <div class="expert-name">质量专家 (gstack:qa)</div>
+                    </div>
+                    <div class="expert-analysis">
+                        <p><strong>主要风险：</strong> 积分计算错误、数据丢失、系统性能瓶颈。</p>
+                        <p><strong>测试重点：</strong> 积分计算逻辑、并发性能、数据备份恢复。</p>
+                        <p><strong>质量要求：</strong> 积分计算准确率99.99%，系统可用性99.9%。</p>
+                    </div>
+                </div>
+                
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: var(--docs);">DOC</div>
+                        <div class="expert-name">文档专家 (gstack:docs)</div>
+                    </div>
+                    <div class="expert-analysis">
+                        <p><strong>文档需求：</strong> API文档、用户手册、部署指南、故障排查。</p>
+                        <p><strong>输出格式：</strong> Markdown + OpenAPI规范 + 视频教程。</p>
+                        <p><strong>关键内容：</strong> 积分计算规则说明、API调用示例、常见问题。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn" id="showSolutionBtn">🎯 查看综合解决方案</button>
+            </div>
+        </div>
+
+        <!-- 综合解决方案 -->
+        <div class="solution-section" id="solutionSection">
+            <h2 class="solution-title">💡 gstack专家团队综合解决方案</h2>
+            
+            <div class="solution-card">
+                <div class="solution-problem">❌ 当前问题（基于5W1H分析）：</div>
+                <p><strong>Who:</strong> 小李（中小电商企业主）在 <strong>Where:</strong> 公司办公室，<strong>When:</strong> 营业时间特别是订单高峰期，<strong>What:</strong> 需要管理会员信息、计算积分、发放优惠券，<strong>How:</strong> 目前使用Excel+人工+微信的方式，效率低且易出错。</p>
+            </div>
+            
+            <div class="solution-card">
+                <div class="solution-problem">✅ 你的解决方案：</div>
+                <p><strong>智能会员管理系统</strong> - 自动化的会员管理平台，解决人工管理的痛点。</p>
+            </div>
+            
+            <div class="solution-card">
+                <div class="solution-problem">🎯 gstack专家建议的MVP范围：</div>
+                <p><strong>核心功能（4周）：</strong> 会员信息管理、基础积分计算</p>
+                <p><strong>增强功能（4周）：</strong> 优惠券系统、基础报表</p>
+                <p><strong>扩展功能（8周）：</strong> 智能客服、API开放、移动端</p>
+            </div>
+            
+            <div class="solution-card">
+                <div class="solution-problem">⚙️ 技术实施方案：</div>
+                <p>• <strong>前端：</strong> React + Ant Design，响应式设计</p>
+                <p>• <strong>后端：</strong> Node.js + Express，RESTful API</p>
+                <p>• <strong>数据库：</strong> PostgreSQL（会员数据）+ Redis（缓存）</p>
+                <p>• <strong>部署：</strong> Docker + Kubernetes，支持弹性扩展</p>
+            </div>
+            
+            <div class="solution-card">
+                <div class="solution-problem">📊 预期效果：</div>
+                <p>• 会员管理时间减少70%</p>
+                <p>• 积分计算准确率提升至99.99%</p>
+                <p>• 客户满意度提升20%</p>
+                <p>• 运营成本降低40%</p>
+            </div>
+            
+            <div class="solution-card">
+                <div class="solution-problem">🚀 下一步行动建议：</div>
+                <p>1. 使用gstack:init创建项目脚手架</p>
+                <p>2. 使用gstack:review进行代码审查</p>
+                <p>3. 使用gstack:test进行自动化测试</p>
+                <p>4. 使用gstack:ship进行部署上线</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button class="btn">📄 生成PRD文档 (gstack:docs)</button>
+                <button class="btn" style="margin-left: 15px;">⚙️ 生成技术方案 (gstack:eng)</button>
+                <button class="btn" style="margin-left: 15px;">🚀 创建项目 (gstack:init)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            const who = document.getElementById('inputWho').value.trim();
+            const where = document.getElementById('inputWhere').value.trim();
+            const when = document.getElementById('inputWhen').value.trim();
+            const what = document.getElementById('inputWhat').value.trim();
+            
+            if (!who || !where || !when || !what) {
+                alert('请完整填写5W1H分析的前4项（Who/Where/When/What）');
+                return;
+            }
+            
+            // 显示gstack专家分析过程
+            const thinking = document.getElementById('thinkingIndicator');
+            const expertPanel = document.getElementById('expertPanel');
+            
+            thinking.style.display = 'block';
+            this.disabled = true;
+            this.textContent = '专家分析中...';
+            
+            // 模拟gstack专家团队协作分析
+            setTimeout(() => {
+                thinking.style.display = 'none';
+                expertPanel.style.display = 'block';
+                this.disabled = false;
+                this.textContent = '🚀 调用gstack专家团队分析';
+                
+                // 滚动到专家分析
+                expertPanel.scrollIntoView({ behavior: 'smooth' });
+                
+                // 模拟gstack调用日志
+                console.log('🔧 gstack专家调用记录：');
+                console.log('1. gstack:ceo - 战略分析完成');
+                console.log('2. gstack:eng - 技术评估完成');
+                console.log('3. gstack:product - 产品方案完成');
+                console.log('4. gstack:qa - 风险评估完成');
+                console.log('5. gstack:docs - 文档规划完成');
+            }, 2500);
+        });
+        
+        document.getElementById('showSolutionBtn').addEventListener('click', function() {
+            const solutionSection = document.getElementById('solutionSection');
+            solutionSection.style.display = 'block';
+            solutionSection.scrollIntoView({ behavior: 'smooth' });
+            
+            console.log('🎯 综合解决方案生成完成');
+            console.log('• 基于5W1H真实场景分析');
+            console.log('• 整合gstack多专家意见');
+            console.log('• 产出可执行技术方案');
+        });
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('gstack专家需求分析系统已加载');
+            console.log('设计理念：正确使用5W1H + gstack专家协作');
+        });
+    </script>
+</body>
+</html>

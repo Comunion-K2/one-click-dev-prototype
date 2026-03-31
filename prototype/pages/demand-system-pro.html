@@ -424,7 +424,153 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
         
-        /* 页面3：价值分析 */
+        /* 页面3：预期指标表现 */
+        .expected-metrics-page {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .metrics-category {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+        
+        .category-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .metrics-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .filter-tag {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .filter-tag:hover {
+            background: var(--surface-dark);
+        }
+        
+        .filter-tag.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .impact-selector {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        
+        .impact-option {
+            padding: 8px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .impact-option:hover {
+            background: var(--surface);
+        }
+        
+        .impact-option.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .impact-option.increase {
+            border-color: var(--success);
+        }
+        
+        .impact-option.increase.selected {
+            background: var(--success);
+            color: white;
+        }
+        
+        .impact-option.decrease {
+            border-color: var(--danger);
+        }
+        
+        .impact-option.decrease.selected {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .selected-metrics {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 32px;
+        }
+        
+        .selected-metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .selected-metric-item:last-child {
+            border-bottom: none;
+        }
+        
+        .metric-impact {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .impact-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .impact-badge.increase-slight {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+        
+        .impact-badge.increase-large {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+        
+        .impact-badge.decrease-slight {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        .impact-badge.decrease-large {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        
+        /* 页面4：价值分析 */
         .value-analysis-page {
             max-width: 1000px;
             margin: 0 auto;
@@ -732,20 +878,27 @@
                     
                     <div class="workflow-step" data-step="2">
                         <div class="step-indicator">2</div>
-                        <div class="step-name">AI澄清</div>
+                        <div class="step-name">需求澄清</div>
                     </div>
                     
                     <div class="step-connector"></div>
                     
                     <div class="workflow-step" data-step="3">
                         <div class="step-indicator">3</div>
-                        <div class="step-name">价值分析</div>
+                        <div class="step-name">预期指标</div>
                     </div>
                     
                     <div class="step-connector"></div>
                     
                     <div class="workflow-step" data-step="4">
                         <div class="step-indicator">4</div>
+                        <div class="step-name">价值分析</div>
+                    </div>
+                    
+                    <div class="step-connector"></div>
+                    
+                    <div class="workflow-step" data-step="5">
+                        <div class="step-indicator">5</div>
                         <div class="step-name">文档生成</div>
                     </div>
                 </div>
@@ -822,13 +975,123 @@
                         </button>
                         
                         <button class="action-button primary" id="nextToStep3">
+                            下一步：预期指标 →
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 页面3：预期指标表现 -->
+                <div class="expected-metrics-page" id="step3Content" style="display: none;">
+                    <div style="text-align: center; margin-bottom: 40px;">
+                        <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 8px;">预期指标表现</h2>
+                        <p style="color: var(--text-light);">选择你认为这个需求会影响的指标及其影响程度</p>
+                    </div>
+                    
+                    <!-- 用户指标 -->
+                    <div class="metrics-category">
+                        <div class="category-title">
+                            <span>👤</span>
+                            <span>用户指标</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="userMetricsFilter">
+                            <div class="filter-tag" data-metric="dau">DAU（日活跃用户）</div>
+                            <div class="filter-tag" data-metric="mau">MAU（月活跃用户）</div>
+                            <div class="filter-tag" data-metric="retention">留存率</div>
+                            <div class="filter-tag" data-metric="usage_time">使用时长</div>
+                            <div class="filter-tag" data-metric="page_stay">页面停留时长</div>
+                            <div class="filter-tag" data-metric="bounce_rate">跳出率</div>
+                            <div class="filter-tag" data-metric="page_depth">页面深度</div>
+                            <div class="filter-tag" data-metric="feature_usage">功能使用率</div>
+                        </div>
+                        
+                        <div id="userImpactSelector" style="display: none;">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 业务指标 -->
+                    <div class="metrics-category">
+                        <div class="category-title">
+                            <span>💰</span>
+                            <span>业务指标</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="businessMetricsFilter">
+                            <div class="filter-tag" data-metric="gmv">GMV（商品交易总额）</div>
+                            <div class="filter-tag" data-metric="revenue">收入</div>
+                            <div class="filter-tag" data-metric="arpu">ARPU（用户平均收入）</div>
+                            <div class="filter-tag" data-metric="repurchase">复购率</div>
+                            <div class="filter-tag" data-metric="conversion">转化率</div>
+                            <div class="filter-tag" data-metric="cac">CAC（获客成本）</div>
+                            <div class="filter-tag" data-metric="cost">运营成本</div>
+                            <div class="filter-tag" data-metric="efficiency">人工效率</div>
+                        </div>
+                        
+                        <div id="businessImpactSelector" style="display: none;">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 内容指标 -->
+                    <div class="metrics-category">
+                        <div class="category-title">
+                            <span>📊</span>
+                            <span>内容指标</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="contentMetricsFilter">
+                            <div class="filter-tag" data-metric="seo_traffic">SEO流量</div>
+                            <div class="filter-tag" data-metric="geo_reference">GEO引用率</div>
+                            <div class="filter-tag" data-metric="share_rate">分享率</div>
+                            <div class="filter-tag" data-metric="engagement">互动率</div>
+                            <div class="filter-tag" data-metric="comments">评论数</div>
+                            <div class="filter-tag" data-metric="likes">点赞数</div>
+                            <div class="filter-tag" data-metric="bookmarks">收藏数</div>
+                        </div>
+                        
+                        <div id="contentImpactSelector" style="display: none;">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 已选指标汇总 -->
+                    <div class="selected-metrics" id="selectedMetrics" style="display: none;">
+                        <div style="font-weight: 600; margin-bottom: 16px;">已选指标：</div>
+                        <div id="selectedMetricsList"></div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+                        <button class="action-button secondary" id="backToStep2FromMetrics">
+                            ← 返回需求澄清
+                        </button>
+                        
+                        <button class="action-button primary" id="nextToStep4FromMetrics">
                             下一步：价值分析 →
                         </button>
                     </div>
                 </div>
                 
-                <!-- 页面3：价值分析 -->
-                <div class="value-analysis-page" id="step3Content" style="display: none;">
+                <!-- 页面4：价值分析 -->
+                <div class="value-analysis-page" id="step4Content" style="display: none;">
                     <!-- 北极星指标 -->
                     <div class="north-star-section">
                         <div class="north-star-label">⭐ 北极星指标</div>
@@ -941,18 +1204,18 @@
                     </div>
                     
                     <div style="display: flex; justify-content: space-between; margin-top: 40px;">
-                        <button class="action-button secondary" id="backToStep2">
-                            ← 返回AI澄清
+                        <button class="action-button secondary" id="backToStep3FromValue">
+                            ← 返回预期指标
                         </button>
                         
-                        <button class="action-button primary" id="nextToStep4">
+                        <button class="action-button primary" id="nextToStep5">
                             下一步：文档生成 →
                         </button>
                     </div>
                 </div>
                 
-                <!-- 页面4：文档生成 -->
-                <div class="document-page" id="step4Content" style="display: none;">
+                <!-- 页面5：文档生成 -->
+                <div class="document-page" id="step5Content" style="display: none;">
                     <div class="document-header">
                         <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 8px;">需求分析文档生成完成</h2>
                         <p style="color: var(--text-light);">基于AI分析生成的可决策文档</p>
@@ -1165,7 +1428,7 @@
             });
             
             document.getElementById('nextToStep3')?.addEventListener('click', function() {
-                // 在实际产品中，这里会保存用户修改的澄清内容
+                // 保存用户修改的澄清内容
                 const q1 = document.getElementById('question1').value;
                 const q2 = document.getElementById('question2').value;
                 const q3 = document.getElementById('question3').value;
@@ -1174,14 +1437,30 @@
                 goToStep(3);
             });
             
-            document.getElementById('backToStep2')?.addEventListener('click', function() {
+            document.getElementById('backToStep2FromMetrics')?.addEventListener('click', function() {
                 goToStep(2);
             });
             
-            document.getElementById('nextToStep4')?.addEventListener('click', function() {
-                // 在实际产品中，这里会触发AI价值分析
-                console.log('开始AI价值分析...');
+            document.getElementById('nextToStep4FromMetrics')?.addEventListener('click', function() {
+                // 检查是否选择了指标
+                const selectedMetrics = getSelectedMetrics();
+                if (selectedMetrics.length === 0) {
+                    alert('请至少选择一个预期影响的指标');
+                    return;
+                }
+                
+                console.log('预期指标选择:', selectedMetrics);
                 goToStep(4);
+            });
+            
+            document.getElementById('backToStep3FromValue')?.addEventListener('click', function() {
+                goToStep(3);
+            });
+            
+            document.getElementById('nextToStep5')?.addEventListener('click', function() {
+                // 触发AI价值分析
+                console.log('开始AI价值分析...');
+                goToStep(5);
             });
             
             // 文档页面按钮
@@ -1255,10 +1534,173 @@
                 contentElement.style.display = 'block';
             }
             
-            // 移除自动跳转逻辑
-            // 每一步都需要用户手动确认
+            // 如果是步骤3（预期指标），初始化交互
+            if (step === 3) {
+                initMetricsSelection();
+            }
             
             console.log(`切换到步骤 ${step}`);
+        }
+        
+        // 预期指标选择逻辑
+        let selectedMetrics = [];
+        
+        function initMetricsSelection() {
+            selectedMetrics = [];
+            
+            // 为所有筛选标签添加点击事件
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const metric = this.dataset.metric;
+                    const category = this.closest('.metrics-category').id.replace('MetricsFilter', '');
+                    
+                    // 切换选中状态
+                    this.classList.toggle('selected');
+                    
+                    if (this.classList.contains('selected')) {
+                        // 显示影响程度选择器
+                        const selectorId = `${category}ImpactSelector`;
+                        const selector = document.getElementById(selectorId);
+                        if (selector) {
+                            selector.style.display = 'block';
+                            
+                            // 为影响程度选项添加事件
+                            selector.querySelectorAll('.impact-option').forEach(option => {
+                                option.addEventListener('click', function() {
+                                    // 清除同一指标的其他选择
+                                    selector.querySelectorAll('.impact-option').forEach(o => {
+                                        o.classList.remove('selected');
+                                    });
+                                    
+                                    // 选中当前选项
+                                    this.classList.add('selected');
+                                    
+                                    // 保存选择
+                                    const impact = this.dataset.impact;
+                                    saveMetricSelection(category, metric, impact);
+                                });
+                            });
+                        }
+                    } else {
+                        // 移除选择
+                        removeMetricSelection(metric);
+                    }
+                });
+            });
+        }
+        
+        function saveMetricSelection(category, metric, impact) {
+            // 移除同指标的旧选择
+            selectedMetrics = selectedMetrics.filter(m => m.metric !== metric);
+            
+            // 添加新选择
+            selectedMetrics.push({
+                category,
+                metric,
+                impact,
+                name: getMetricName(metric)
+            });
+            
+            updateSelectedMetricsDisplay();
+        }
+        
+        function removeMetricSelection(metric) {
+            selectedMetrics = selectedMetrics.filter(m => m.metric !== metric);
+            updateSelectedMetricsDisplay();
+        }
+        
+        function getMetricName(metric) {
+            const metricNames = {
+                'dau': 'DAU（日活跃用户）',
+                'mau': 'MAU（月活跃用户）',
+                'retention': '留存率',
+                'usage_time': '使用时长',
+                'page_stay': '页面停留时长',
+                'bounce_rate': '跳出率',
+                'page_depth': '页面深度',
+                'feature_usage': '功能使用率',
+                'gmv': 'GMV（商品交易总额）',
+                'revenue': '收入',
+                'arpu': 'ARPU（用户平均收入）',
+                'repurchase': '复购率',
+                'conversion': '转化率',
+                'cac': 'CAC（获客成本）',
+                'cost': '运营成本',
+                'efficiency': '人工效率',
+                'seo_traffic': 'SEO流量',
+                'geo_reference': 'GEO引用率',
+                'share_rate': '分享率',
+                'engagement': '互动率',
+                'comments': '评论数',
+                'likes': '点赞数',
+                'bookmarks': '收藏数'
+            };
+            
+            return metricNames[metric] || metric;
+        }
+        
+        function getImpactText(impact) {
+            const impactTexts = {
+                'increase-slight': '轻微增加',
+                'increase-large': '大幅增加',
+                'decrease-slight': '轻微减少',
+                'decrease-large': '大幅减少'
+            };
+            
+            return impactTexts[impact] || impact;
+        }
+        
+        function updateSelectedMetricsDisplay() {
+            const container = document.getElementById('selectedMetrics');
+            const list = document.getElementById('selectedMetricsList');
+            
+            if (selectedMetrics.length === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'block';
+            
+            // 清空列表
+            list.innerHTML = '';
+            
+            // 添加每个已选指标
+            selectedMetrics.forEach(metric => {
+                const item = document.createElement('div');
+                item.className = 'selected-metric-item';
+                
+                const impactClass = metric.impact.replace('-', '-');
+                
+                item.innerHTML = `
+                    <div>
+                        <div style="font-weight: 500;">${metric.name}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light);">${metric.category === 'user' ? '用户指标' : metric.category === 'business' ? '业务指标' : '内容指标'}</div>
+                    </div>
+                    <div class="metric-impact">
+                        <div class="impact-badge ${impactClass}">${getImpactText(metric.impact)}</div>
+                        <button class="remove-metric" data-metric="${metric.metric}" style="background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.25rem;">×</button>
+                    </div>
+                `;
+                
+                list.appendChild(item);
+            });
+            
+            // 为删除按钮添加事件
+            document.querySelectorAll('.remove-metric').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const metric = this.dataset.metric;
+                    removeMetricSelection(metric);
+                    
+                    // 同时取消筛选标签的选中状态
+                    document.querySelectorAll(`.filter-tag[data-metric="${metric}"]`).forEach(tag => {
+                        tag.classList.remove('selected');
+                    });
+                });
+            });
+        }
+        
+        function getSelectedMetrics() {
+            return selectedMetrics;
         }
         
         // 页面加载动画

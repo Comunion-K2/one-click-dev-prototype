@@ -923,7 +923,7 @@
                             </div>
                             
                             <button class="send-button" id="sendDemandBtn">
-                                <span>下一步：AI澄清</span>
+                                <span>下一步：需求澄清</span>
                                 <span>→</span>
                             </button>
                         </div>
@@ -987,25 +987,177 @@
                         <p style="color: var(--text-light);">选择你认为这个需求会影响的指标及其影响程度</p>
                     </div>
                     
-                    <!-- 用户指标 -->
+                    <!-- 北极星指标 -->
+                    <div class="metrics-category" style="border: 2px solid var(--primary);">
+                        <div class="category-title">
+                            <span>⭐</span>
+                            <span>北极星指标</span>
+                            <span style="font-size: 0.875rem; color: var(--text-light); font-weight: normal;">（默认GMV，可在项目设置中修改）</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="northStarFilter">
+                            <div class="filter-tag selected" data-metric="gmv">GMV（商品交易总额）</div>
+                        </div>
+                        
+                        <div id="northStarImpactSelector">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase selected" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 用户行为指标 -->
                     <div class="metrics-category">
                         <div class="category-title">
                             <span>👤</span>
-                            <span>用户指标</span>
+                            <span>用户行为指标</span>
                         </div>
                         
-                        <div class="metrics-filter" id="userMetricsFilter">
-                            <div class="filter-tag" data-metric="dau">DAU（日活跃用户）</div>
-                            <div class="filter-tag" data-metric="mau">MAU（月活跃用户）</div>
+                        <div class="metrics-filter" id="userBehaviorFilter">
+                            <div class="filter-tag" data-metric="dau">DAU（日活跃用户数）</div>
+                            <div class="filter-tag" data-metric="mau">MAU（月活跃用户数）</div>
                             <div class="filter-tag" data-metric="retention">留存率</div>
-                            <div class="filter-tag" data-metric="usage_time">使用时长</div>
                             <div class="filter-tag" data-metric="page_stay">页面停留时长</div>
-                            <div class="filter-tag" data-metric="bounce_rate">跳出率</div>
+                            <div class="filter-tag" data-metric="bounce_rate">页面跳出率</div>
                             <div class="filter-tag" data-metric="page_depth">页面深度</div>
                             <div class="filter-tag" data-metric="feature_usage">功能使用率</div>
+                            <div class="filter-tag" data-metric="user_path">用户路径</div>
                         </div>
                         
-                        <div id="userImpactSelector" style="display: none;">
+                        <div id="userBehaviorImpactSelector" style="display: none;">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 增长指标 -->
+                    <div class="metrics-category">
+                        <div class="category-title">
+                            <span>📈</span>
+                            <span>增长指标</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="growthFilter">
+                            <div class="filter-tag" data-metric="new_user_conversion">新人转化率</div>
+                            <div class="filter-tag" data-metric="activation">激活率</div>
+                            <div class="filter-tag" data-metric="referral">推荐率</div>
+                            <div class="filter-tag" data-metric="viral_coefficient">病毒系数</div>
+                        </div>
+                        
+                        <div id="growthImpactSelector" style="display: none;">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 流量指标 -->
+                    <div class="metrics-category">
+                        <div class="category-title">
+                            <span>🌊</span>
+                            <span>流量指标</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="trafficFilter">
+                            <div class="filter-tag" data-metric="uv">UV（独立访客数）</div>
+                            <div class="filter-tag" data-metric="pv">PV（页面浏览量）</div>
+                            <div class="filter-tag" data-metric="visit_frequency">访问频次</div>
+                            <div class="filter-tag" data-metric="session_duration">会话时长</div>
+                            <div class="filter-tag" data-metric="traffic_source">流量来源</div>
+                        </div>
+                        
+                        <div id="trafficImpactSelector" style="display: none;">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 质量指标 -->
+                    <div class="metrics-category">
+                        <div class="category-title">
+                            <span>🎯</span>
+                            <span>质量指标</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="qualityFilter">
+                            <div class="filter-tag" data-metric="error_rate">错误率</div>
+                            <div class="filter-tag" data-metric="load_time">加载时间</div>
+                            <div class="filter-tag" data-metric="availability">可用性</div>
+                            <div class="filter-tag" data-metric="user_satisfaction">用户满意度</div>
+                        </div>
+                        
+                        <div id="qualityImpactSelector" style="display: none;">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 业务指标 -->
+                    <div class="metrics-category">
+                        <div class="category-title">
+                            <span>💰</span>
+                            <span>业务指标</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="businessFilter">
+                            <div class="filter-tag" data-metric="revenue">收入</div>
+                            <div class="filter-tag" data-metric="arpu">ARPU（用户平均收入）</div>
+                            <div class="filter-tag" data-metric="repurchase">复购率</div>
+                            <div class="filter-tag" data-metric="conversion">转化率</div>
+                            <div class="filter-tag" data-metric="cac">CAC（获客成本）</div>
+                            <div class="filter-tag" data-metric="cost">运营成本</div>
+                            <div class="filter-tag" data-metric="efficiency">人工效率</div>
+                        </div>
+                        
+                        <div id="businessImpactSelector" style="display: none;">
+                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
+                            <div class="impact-selector">
+                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
+                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
+                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 内容指标 -->
+                    <div class="metrics-category">
+                        <div class="category-title">
+                            <span>📊</span>
+                            <span>内容指标</span>
+                        </div>
+                        
+                        <div class="metrics-filter" id="contentFilter">
+                            <div class="filter-tag" data-metric="seo_traffic">SEO流量</div>
+                            <div class="filter-tag" data-metric="geo_reference">GEO引用率</div>
+                            <div class="filter-tag" data-metric="share_rate">分享率</div>
+                            <div class="filter-tag" data-metric="engagement">互动率</div>
+                        </div>
+                        
+                        <div id="contentImpactSelector" style="display: none;">
                             <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
                             <div class="impact-selector">
                                 <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
@@ -1548,11 +1700,14 @@
         function initMetricsSelection() {
             selectedMetrics = [];
             
-            // 为所有筛选标签添加点击事件
-            document.querySelectorAll('.filter-tag').forEach(tag => {
+            // 初始化北极星指标（默认选中GMV，轻微增加）
+            saveMetricSelection('northStar', 'gmv', 'increase-slight');
+            
+            // 为所有筛选标签添加点击事件（除了北极星指标）
+            document.querySelectorAll('.filter-tag:not(#northStarFilter .filter-tag)').forEach(tag => {
                 tag.addEventListener('click', function() {
                     const metric = this.dataset.metric;
-                    const category = this.closest('.metrics-category').id.replace('MetricsFilter', '');
+                    const category = this.closest('.metrics-category').id.replace('Filter', '');
                     
                     // 切换选中状态
                     this.classList.toggle('selected');
@@ -1567,7 +1722,7 @@
                             // 为影响程度选项添加事件
                             selector.querySelectorAll('.impact-option').forEach(option => {
                                 option.addEventListener('click', function() {
-                                    // 清除同一指标的其他选择
+                                    // 清除同一分类下同一指标的其他选择
                                     selector.querySelectorAll('.impact-option').forEach(o => {
                                         o.classList.remove('selected');
                                     });
@@ -1584,7 +1739,36 @@
                     } else {
                         // 移除选择
                         removeMetricSelection(metric);
+                        
+                        // 隐藏影响程度选择器
+                        const category = this.closest('.metrics-category').id.replace('Filter', '');
+                        const selectorId = `${category}ImpactSelector`;
+                        const selector = document.getElementById(selectorId);
+                        if (selector) {
+                            // 检查该分类下是否还有其他选中的指标
+                            const hasOtherSelected = Array.from(this.parentElement.querySelectorAll('.filter-tag.selected')).some(t => t !== this);
+                            if (!hasOtherSelected) {
+                                selector.style.display = 'none';
+                            }
+                        }
                     }
+                });
+            });
+            
+            // 为北极星指标的影响选项添加事件
+            document.querySelectorAll('#northStarImpactSelector .impact-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // 清除其他选择
+                    document.querySelectorAll('#northStarImpactSelector .impact-option').forEach(o => {
+                        o.classList.remove('selected');
+                    });
+                    
+                    // 选中当前选项
+                    this.classList.add('selected');
+                    
+                    // 更新北极星指标选择
+                    const impact = this.dataset.impact;
+                    saveMetricSelection('northStar', 'gmv', impact);
                 });
             });
         }
@@ -1611,15 +1795,28 @@
         
         function getMetricName(metric) {
             const metricNames = {
-                'dau': 'DAU（日活跃用户）',
-                'mau': 'MAU（月活跃用户）',
+                'gmv': 'GMV（商品交易总额）',
+                'dau': 'DAU（日活跃用户数）',
+                'mau': 'MAU（月活跃用户数）',
                 'retention': '留存率',
-                'usage_time': '使用时长',
                 'page_stay': '页面停留时长',
-                'bounce_rate': '跳出率',
+                'bounce_rate': '页面跳出率',
                 'page_depth': '页面深度',
                 'feature_usage': '功能使用率',
-                'gmv': 'GMV（商品交易总额）',
+                'user_path': '用户路径',
+                'new_user_conversion': '新人转化率',
+                'activation': '激活率',
+                'referral': '推荐率',
+                'viral_coefficient': '病毒系数',
+                'uv': 'UV（独立访客数）',
+                'pv': 'PV（页面浏览量）',
+                'visit_frequency': '访问频次',
+                'session_duration': '会话时长',
+                'traffic_source': '流量来源',
+                'error_rate': '错误率',
+                'load_time': '加载时间',
+                'availability': '可用性',
+                'user_satisfaction': '用户满意度',
                 'revenue': '收入',
                 'arpu': 'ARPU（用户平均收入）',
                 'repurchase': '复购率',
@@ -1630,10 +1827,7 @@
                 'seo_traffic': 'SEO流量',
                 'geo_reference': 'GEO引用率',
                 'share_rate': '分享率',
-                'engagement': '互动率',
-                'comments': '评论数',
-                'likes': '点赞数',
-                'bookmarks': '收藏数'
+                'engagement': '互动率'
             };
             
             return metricNames[metric] || metric;
@@ -1648,6 +1842,20 @@
             };
             
             return impactTexts[impact] || impact;
+        }
+        
+        function getCategoryName(category) {
+            const categoryNames = {
+                'northStar': '北极星指标',
+                'userBehavior': '用户行为指标',
+                'growth': '增长指标',
+                'traffic': '流量指标',
+                'quality': '质量指标',
+                'business': '业务指标',
+                'content': '内容指标'
+            };
+            
+            return categoryNames[category] || category;
         }
         
         function updateSelectedMetricsDisplay() {
@@ -1674,7 +1882,7 @@
                 item.innerHTML = `
                     <div>
                         <div style="font-weight: 500;">${metric.name}</div>
-                        <div style="font-size: 0.875rem; color: var(--text-light);">${metric.category === 'user' ? '用户指标' : metric.category === 'business' ? '业务指标' : '内容指标'}</div>
+                        <div style="font-size: 0.875rem; color: var(--text-light);">${getCategoryName(metric.category)}</div>
                     </div>
                     <div class="metric-impact">
                         <div class="impact-badge ${impactClass}">${getImpactText(metric.impact)}</div>

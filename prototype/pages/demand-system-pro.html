@@ -332,6 +332,36 @@
             color: white;
         }
         
+        /* 下拉菜单 */
+        .dropdown-menu {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border);
+            z-index: 100;
+            min-width: 160px;
+            display: none;
+        }
+        
+        .dropdown-option {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .dropdown-option:hover {
+            background: var(--surface);
+        }
+        
+        .dropdown-option.selected {
+            background: var(--primary);
+            color: white;
+        }
+        
         .send-button {
             background: var(--primary);
             color: white;
@@ -582,6 +612,71 @@
         .impact-badge.decrease-large {
             background: rgba(239, 68, 68, 0.2);
             color: var(--danger);
+        }
+        
+        /* 气泡样式 */
+        .impact-bubble {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border);
+            z-index: 100;
+            min-width: 200px;
+            display: none;
+            top: 100%;
+            left: 0;
+            margin-top: 8px;
+        }
+        
+        .bubble-header {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        
+        .bubble-impact-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .bubble-impact-option {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .bubble-impact-option:hover {
+            background: var(--surface);
+        }
+        
+        .bubble-impact-option.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .bubble-impact-option.increase {
+            border-color: var(--success);
+        }
+        
+        .bubble-impact-option.increase.selected {
+            background: var(--success);
+            color: white;
+        }
+        
+        .bubble-impact-option.decrease {
+            border-color: var(--danger);
+        }
+        
+        .bubble-impact-option.decrease.selected {
+            background: var(--danger);
+            color: white;
         }
         
         /* 气泡样式 */
@@ -991,9 +1086,25 @@
                         
                         <div class="input-footer">
                             <div class="input-tags">
-                                <div class="input-tag selectable" data-type="function">功能</div>
-                                <div class="input-tag selectable selected" data-type="demand-type">类型：优化</div>
-                                <div class="input-tag selectable selected" data-type="source">来源：产品自驱</div>
+                                <div class="input-tag selectable selected" data-type="demand-type" data-value="new" id="demandTypeTag">
+                                    需求类型：新增
+                                    <div class="dropdown-menu" id="demandTypeDropdown">
+                                        <div class="dropdown-option selected" data-value="new">新增</div>
+                                        <div class="dropdown-option" data-value="optimization">优化</div>
+                                        <div class="dropdown-option" data-value="fix">修复</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="input-tag selectable selected" data-type="source" data-value="product" id="sourceTag">
+                                    来源：产品自驱
+                                    <div class="dropdown-menu" id="sourceDropdown">
+                                        <div class="dropdown-option" data-value="operation">运营</div>
+                                        <div class="dropdown-option" data-value="customer">客服</div>
+                                        <div class="dropdown-option" data-value="business">业务部门</div>
+                                        <div class="dropdown-option selected" data-value="product">产品自驱</div>
+                                        <div class="dropdown-option" data-value="other">其他</div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <button class="send-button" id="sendDemandBtn">
@@ -1076,7 +1187,18 @@
                         </div>
                         
                         <div class="metrics-filter" id="northStarFilter">
-                            <div class="filter-tag selected" data-metric="gmv">GMV（商品交易总额）</div>
+                            <div class="filter-tag selected" data-metric="gmv" data-category="northStar" style="position: relative;">
+                                GMV（商品交易总额）
+                                <div class="impact-bubble" id="bubble-gmv">
+                                    <div class="bubble-header">选择影响程度</div>
+                                    <div class="bubble-impact-options">
+                                        <div class="bubble-impact-option increase selected" data-impact="increase-slight">轻微增加</div>
+                                        <div class="bubble-impact-option increase" data-impact="increase-large">大幅增加</div>
+                                        <div class="bubble-impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                        <div class="bubble-impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
 
@@ -1090,8 +1212,30 @@
                         </div>
                         
                         <div class="metrics-filter" id="userBehaviorFilter">
-                            <div class="filter-tag" data-metric="dau">DAU（日活跃用户数）</div>
-                            <div class="filter-tag" data-metric="mau">MAU（月活跃用户数）</div>
+                            <div class="filter-tag" data-metric="dau" data-category="userBehavior" style="position: relative;">
+                                DAU（日活跃用户数）
+                                <div class="impact-bubble" id="bubble-dau">
+                                    <div class="bubble-header">选择影响程度</div>
+                                    <div class="bubble-impact-options">
+                                        <div class="bubble-impact-option increase selected" data-impact="increase-slight">轻微增加</div>
+                                        <div class="bubble-impact-option increase" data-impact="increase-large">大幅增加</div>
+                                        <div class="bubble-impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                        <div class="bubble-impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="filter-tag" data-metric="mau" data-category="userBehavior" style="position: relative;">
+                                MAU（月活跃用户数）
+                                <div class="impact-bubble" id="bubble-mau">
+                                    <div class="bubble-header">选择影响程度</div>
+                                    <div class="bubble-impact-options">
+                                        <div class="bubble-impact-option increase selected" data-impact="increase-slight">轻微增加</div>
+                                        <div class="bubble-impact-option increase" data-impact="increase-large">大幅增加</div>
+                                        <div class="bubble-impact-option decrease" data-impact="decrease-slight">轻微减少</div>
+                                        <div class="bubble-impact-option decrease" data-impact="decrease-large">大幅减少</div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="filter-tag" data-metric="retention">留存率</div>
                             <div class="filter-tag" data-metric="page_stay">页面停留时长</div>
                             <div class="filter-tag" data-metric="bounce_rate">页面跳出率</div>
@@ -1738,68 +1882,69 @@
             // 初始化北极星指标（默认选中GMV，轻微增加）
             saveMetricSelection('northStar', 'gmv', 'increase-slight');
             
-            // 为所有筛选标签添加点击事件（除了北极星指标）
-            document.querySelectorAll('.filter-tag:not(#northStarFilter .filter-tag)').forEach(tag => {
-                tag.addEventListener('click', function() {
+            // 为所有筛选标签添加点击事件
+            document.querySelectorAll('.filter-tag').forEach(tag => {
+                tag.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 防止事件冒泡
+                    
                     const metric = this.dataset.metric;
-                    const categoryElement = this.closest('.metrics-category');
-                    const category = categoryElement.id.replace('Filter', '');
+                    const category = this.dataset.category;
                     
                     // 切换选中状态
                     this.classList.toggle('selected');
                     
                     if (this.classList.contains('selected')) {
-                        // 显示影响程度选择器
-                        const selectorId = `${category}ImpactSelector`;
-                        const selector = document.getElementById(selectorId);
-                        if (selector) {
-                            selector.style.display = 'block';
+                        // 显示气泡
+                        const bubbleId = `bubble-${metric}`;
+                        const bubble = document.getElementById(bubbleId);
+                        if (bubble) {
+                            // 隐藏其他气泡
+                            document.querySelectorAll('.impact-bubble').forEach(b => {
+                                b.style.display = 'none';
+                            });
                             
-                            // 默认选择"轻微增加"（如果还没有选择）
-                            const defaultOption = selector.querySelector('.impact-option.increase[data-impact="increase-slight"]');
+                            // 显示当前气泡
+                            bubble.style.display = 'block';
+                            
+                            // 默认选择"轻微增加"
+                            const defaultOption = bubble.querySelector('.bubble-impact-option.increase[data-impact="increase-slight"]');
                             if (defaultOption) {
-                                // 检查是否已经有选中的影响选项
-                                const hasSelectedImpact = selector.querySelector('.impact-option.selected');
-                                if (!hasSelectedImpact) {
-                                    defaultOption.classList.add('selected');
-                                    saveMetricSelection(category, metric, 'increase-slight');
-                                }
+                                // 清除其他选择
+                                bubble.querySelectorAll('.bubble-impact-option').forEach(o => {
+                                    o.classList.remove('selected');
+                                });
+                                
+                                defaultOption.classList.add('selected');
+                                saveMetricSelection(category, metric, 'increase-slight');
                             }
                         }
                     } else {
                         // 移除选择
                         removeMetricSelection(metric);
                         
-                        // 隐藏影响程度选择器（如果没有其他选中的指标）
-                        const selectorId = `${category}ImpactSelector`;
-                        const selector = document.getElementById(selectorId);
-                        if (selector) {
-                            const hasOtherSelected = Array.from(categoryElement.querySelectorAll('.filter-tag.selected')).some(t => t !== this);
-                            if (!hasOtherSelected) {
-                                selector.style.display = 'none';
-                            }
+                        // 隐藏气泡
+                        const bubbleId = `bubble-${metric}`;
+                        const bubble = document.getElementById(bubbleId);
+                        if (bubble) {
+                            bubble.style.display = 'none';
                         }
                     }
                 });
             });
             
-            // 为所有影响程度选项添加事件（使用事件委托）
+            // 为气泡选项添加事件
             document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('impact-option')) {
+                if (e.target.classList.contains('bubble-impact-option')) {
                     const option = e.target;
-                    const selector = option.closest('.metrics-category');
-                    if (!selector) return;
+                    const bubble = option.closest('.impact-bubble');
+                    const tag = bubble.parentElement;
                     
-                    const category = selector.id.replace('ImpactSelector', '');
+                    const metric = tag.dataset.metric;
+                    const category = tag.dataset.category;
+                    const impact = option.dataset.impact;
                     
-                    // 找到同一分类下选中的指标
-                    const selectedTag = selector.querySelector('.filter-tag.selected');
-                    if (!selectedTag) return;
-                    
-                    const metric = selectedTag.dataset.metric;
-                    
-                    // 清除同一选择器的其他选择
-                    selector.querySelectorAll('.impact-option').forEach(o => {
+                    // 清除同一气泡的其他选择
+                    bubble.querySelectorAll('.bubble-impact-option').forEach(o => {
                         o.classList.remove('selected');
                     });
                     
@@ -1807,25 +1952,17 @@
                     option.classList.add('selected');
                     
                     // 保存选择
-                    const impact = option.dataset.impact;
                     saveMetricSelection(category, metric, impact);
+                    
+                    // 隐藏气泡
+                    bubble.style.display = 'none';
                 }
             });
             
-            // 为北极星指标的特殊处理
-            document.querySelectorAll('#northStarImpactSelector .impact-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    // 清除其他选择
-                    document.querySelectorAll('#northStarImpactSelector .impact-option').forEach(o => {
-                        o.classList.remove('selected');
-                    });
-                    
-                    // 选中当前选项
-                    this.classList.add('selected');
-                    
-                    // 更新北极星指标选择
-                    const impact = this.dataset.impact;
-                    saveMetricSelection('northStar', 'gmv', impact);
+            // 点击页面其他地方隐藏所有气泡
+            document.addEventListener('click', function() {
+                document.querySelectorAll('.impact-bubble').forEach(bubble => {
+                    bubble.style.display = 'none';
                 });
             });
         }
@@ -1967,6 +2104,88 @@
         function getSelectedMetrics() {
             return selectedMetrics;
         }
+        
+        // 首页标签下拉菜单交互（在页面加载后初始化）
+        document.addEventListener('DOMContentLoaded', function() {
+            const demandTypeTag = document.getElementById('demandTypeTag');
+            const sourceTag = document.getElementById('sourceTag');
+            
+            if (demandTypeTag) {
+                demandTypeTag.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const dropdown = document.getElementById('demandTypeDropdown');
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    
+                    // 隐藏其他下拉菜单
+                    document.getElementById('sourceDropdown').style.display = 'none';
+                });
+            }
+            
+            if (sourceTag) {
+                sourceTag.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const dropdown = document.getElementById('sourceDropdown');
+                    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+                    
+                    // 隐藏其他下拉菜单
+                    document.getElementById('demandTypeDropdown').style.display = 'none';
+                });
+            }
+            
+            // 下拉选项点击事件
+            document.querySelectorAll('.dropdown-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const value = this.dataset.value;
+                    const dropdown = this.closest('.dropdown-menu');
+                    const tag = dropdown.parentElement;
+                    const type = tag.dataset.type;
+                    
+                    // 更新标签文本
+                    if (type === 'demand-type') {
+                        const textMap = {
+                            'new': '需求类型：新增',
+                            'optimization': '需求类型：优化',
+                            'fix': '需求类型：修复'
+                        };
+                        tag.textContent = textMap[value] || `需求类型：${value}`;
+                        tag.dataset.value = value;
+                    } else if (type === 'source') {
+                        const textMap = {
+                            'operation': '来源：运营',
+                            'customer': '来源：客服',
+                            'business': '来源：业务部门',
+                            'product': '来源：产品自驱',
+                            'other': '来源：其他'
+                        };
+                        tag.textContent = textMap[value] || `来源：${value}`;
+                        tag.dataset.value = value;
+                    }
+                    
+                    // 更新选中状态
+                    dropdown.querySelectorAll('.dropdown-option').forEach(o => {
+                        o.classList.remove('selected');
+                    });
+                    this.classList.add('selected');
+                    
+                    // 隐藏下拉菜单
+                    dropdown.style.display = 'none';
+                });
+            });
+            
+            // 点击页面其他地方隐藏所有下拉菜单
+            document.addEventListener('click', function() {
+                document.querySelectorAll('.dropdown-menu').forEach(dropdown => {
+                    dropdown.style.display = 'none';
+                });
+            });
+            
+            // 自动聚焦输入框
+            const demandInput = document.getElementById('demandInput');
+            if (demandInput) {
+                demandInput.focus();
+            }
+        });
         
         // 页面加载动画
         window.addEventListener('load', function() {

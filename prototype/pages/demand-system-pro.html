@@ -947,11 +947,17 @@
                     <div class="clarification-questions">
                         <div class="question-card">
                             <div class="question-title">用户遇到了什么困难？</div>
+                            <div class="question-subtitle" style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 12px;">
+                                具体是谁：张三，在什么时间什么情况下遇到了什么问题：7点下班路上饿了
+                            </div>
                             <textarea class="question-input" id="question1">用户在电商平台搜索商品时，搜索结果不够准确，经常找不到想要的商品。需要翻很多页才能找到，体验很差。</textarea>
                         </div>
                         
                         <div class="question-card">
                             <div class="question-title">用户现在是如何解决的？</div>
+                            <div class="question-subtitle" style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 12px;">
+                                打电话给最近的餐厅订餐，但是餐厅高峰不接受订餐，只能等1小时
+                            </div>
                             <textarea class="question-input" id="question2">1. 使用更具体的关键词反复搜索
 2. 通过分类导航逐级查找
 3. 放弃搜索，直接浏览推荐商品
@@ -960,6 +966,9 @@
                         
                         <div class="question-card">
                             <div class="question-title">你的解决方案是什么？</div>
+                            <div class="question-subtitle" style="font-size: 0.875rem; color: var(--text-light); margin-bottom: 12px;">
+                                开发饿了么APP一键选择他想要吃的，到家就能吃
+                            </div>
                             <textarea class="question-input" id="question3">优化搜索算法，提高搜索准确性和相关性排序。增加个性化推荐，基于用户历史行为和偏好展示更相关的商品。优化搜索建议，理解用户真实意图。</textarea>
                         </div>
                     </div>
@@ -1153,35 +1162,6 @@
                         </div>
                         
                         <div id="contentImpactSelector" style="display: none;">
-                            <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
-                            <div class="impact-selector">
-                                <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
-                                <div class="impact-option increase" data-impact="increase-large">大幅增加</div>
-                                <div class="impact-option decrease" data-impact="decrease-slight">轻微减少</div>
-                                <div class="impact-option decrease" data-impact="decrease-large">大幅减少</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- 业务指标 -->
-                    <div class="metrics-category">
-                        <div class="category-title">
-                            <span>💰</span>
-                            <span>业务指标</span>
-                        </div>
-                        
-                        <div class="metrics-filter" id="businessMetricsFilter">
-                            <div class="filter-tag" data-metric="gmv">GMV（商品交易总额）</div>
-                            <div class="filter-tag" data-metric="revenue">收入</div>
-                            <div class="filter-tag" data-metric="arpu">ARPU（用户平均收入）</div>
-                            <div class="filter-tag" data-metric="repurchase">复购率</div>
-                            <div class="filter-tag" data-metric="conversion">转化率</div>
-                            <div class="filter-tag" data-metric="cac">CAC（获客成本）</div>
-                            <div class="filter-tag" data-metric="cost">运营成本</div>
-                            <div class="filter-tag" data-metric="efficiency">人工效率</div>
-                        </div>
-                        
-                        <div id="businessImpactSelector" style="display: none;">
                             <div style="font-weight: 600; margin-bottom: 12px;">选择影响程度：</div>
                             <div class="impact-selector">
                                 <div class="impact-option increase" data-impact="increase-slight">轻微增加</div>
@@ -1702,7 +1682,8 @@
             document.querySelectorAll('.filter-tag:not(#northStarFilter .filter-tag)').forEach(tag => {
                 tag.addEventListener('click', function() {
                     const metric = this.dataset.metric;
-                    const category = this.closest('.metrics-category').id.replace('Filter', '');
+                    const categoryElement = this.closest('.metrics-category');
+                    const category = categoryElement.id.replace('Filter', '');
                     
                     // 切换选中状态
                     this.classList.toggle('selected');
@@ -1714,11 +1695,15 @@
                         if (selector) {
                             selector.style.display = 'block';
                             
-                            // 默认选择"轻微增加"
+                            // 默认选择"轻微增加"（如果还没有选择）
                             const defaultOption = selector.querySelector('.impact-option.increase[data-impact="increase-slight"]');
-                            if (defaultOption && !selector.querySelector('.impact-option.selected')) {
-                                defaultOption.classList.add('selected');
-                                saveMetricSelection(category, metric, 'increase-slight');
+                            if (defaultOption) {
+                                // 检查是否已经有选中的影响选项
+                                const hasSelectedImpact = selector.querySelector('.impact-option.selected');
+                                if (!hasSelectedImpact) {
+                                    defaultOption.classList.add('selected');
+                                    saveMetricSelection(category, metric, 'increase-slight');
+                                }
                             }
                         }
                     } else {
@@ -1726,11 +1711,10 @@
                         removeMetricSelection(metric);
                         
                         // 隐藏影响程度选择器（如果没有其他选中的指标）
-                        const category = this.closest('.metrics-category').id.replace('Filter', '');
                         const selectorId = `${category}ImpactSelector`;
                         const selector = document.getElementById(selectorId);
                         if (selector) {
-                            const hasOtherSelected = Array.from(this.parentElement.querySelectorAll('.filter-tag.selected')).some(t => t !== this);
+                            const hasOtherSelected = Array.from(categoryElement.querySelectorAll('.filter-tag.selected')).some(t => t !== this);
                             if (!hasOtherSelected) {
                                 selector.style.display = 'none';
                             }
@@ -1739,10 +1723,13 @@
                 });
             });
             
-            // 为所有影响程度选项添加事件
-            document.querySelectorAll('.impact-option').forEach(option => {
-                option.addEventListener('click', function() {
-                    const selector = this.closest('.metrics-category');
+            // 为所有影响程度选项添加事件（使用事件委托）
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('impact-option')) {
+                    const option = e.target;
+                    const selector = option.closest('.metrics-category');
+                    if (!selector) return;
+                    
                     const category = selector.id.replace('ImpactSelector', '');
                     
                     // 找到同一分类下选中的指标
@@ -1752,17 +1739,17 @@
                     const metric = selectedTag.dataset.metric;
                     
                     // 清除同一选择器的其他选择
-                    this.parentElement.querySelectorAll('.impact-option').forEach(o => {
+                    selector.querySelectorAll('.impact-option').forEach(o => {
                         o.classList.remove('selected');
                     });
                     
                     // 选中当前选项
-                    this.classList.add('selected');
+                    option.classList.add('selected');
                     
                     // 保存选择
-                    const impact = this.dataset.impact;
+                    const impact = option.dataset.impact;
                     saveMetricSelection(category, metric, impact);
-                });
+                }
             });
             
             // 为北极星指标的特殊处理

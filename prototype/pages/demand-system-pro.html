@@ -757,11 +757,10 @@
                 <div class="demand-input-page" id="step1Content">
                     <div class="input-container">
                         <div class="input-title">开始新的需求分析</div>
-                        <div class="input-subtitle">用一句话描述你想要解决的问题</div>
                         
                         <input type="text" class="title-input" placeholder="需求标题..." value="优化商品搜索功能">
                         
-                        <textarea class="demand-textarea" placeholder="当前商品搜索功能不够智能，用户找不到想要的商品，导致转化率低。需要优化搜索算法，提高搜索准确性和个性化推荐..." id="demandInput"></textarea>
+                        <textarea class="demand-textarea" placeholder="用一句话描述你想要解决的问题..." id="demandInput"></textarea>
                         
                         <div class="input-footer">
                             <div class="input-tags">
@@ -771,7 +770,7 @@
                             </div>
                             
                             <button class="send-button" id="sendDemandBtn">
-                                <span>开始分析</span>
+                                <span>下一步：AI澄清</span>
                                 <span>→</span>
                             </button>
                         </div>
@@ -797,12 +796,12 @@
                     <div class="clarification-questions">
                         <div class="question-card">
                             <div class="question-title">具体业务场景是什么？</div>
-                            <textarea class="question-input">用户在电商平台搜索商品时，搜索结果不够准确，用户需要翻多页才能找到想要的商品。特别是在大促期间，搜索流量大但转化率低。</textarea>
+                            <textarea class="question-input" id="question1">用户在电商平台搜索商品时，搜索结果不够准确，用户需要翻多页才能找到想要的商品。特别是在大促期间，搜索流量大但转化率低。</textarea>
                         </div>
                         
                         <div class="question-card">
                             <div class="question-title">要解决的具体问题是什么？</div>
-                            <textarea class="question-input">1. 搜索准确率低，相关度排序不合理
+                            <textarea class="question-input" id="question2">1. 搜索准确率低，相关度排序不合理
 2. 搜索建议不够智能，不能理解用户意图
 3. 缺少个性化推荐，所有用户看到相同结果
 4. 搜索页面加载速度慢，影响用户体验</textarea>
@@ -810,11 +809,21 @@
                         
                         <div class="question-card">
                             <div class="question-title">期望达成什么业务目标？</div>
-                            <textarea class="question-input">1. 搜索转化率提升8-12%
+                            <textarea class="question-input" id="question3">1. 搜索转化率提升8-12%
 2. GMV月增加¥50,000-80,000
 3. 用户搜索满意度提升15-20%
 4. 搜索功能使用率提升10%</textarea>
                         </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+                        <button class="action-button secondary" id="backToStep1">
+                            ← 返回修改需求
+                        </button>
+                        
+                        <button class="action-button primary" id="nextToStep3">
+                            下一步：价值分析 →
+                        </button>
                     </div>
                 </div>
                 
@@ -929,6 +938,16 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; margin-top: 40px;">
+                        <button class="action-button secondary" id="backToStep2">
+                            ← 返回AI澄清
+                        </button>
+                        
+                        <button class="action-button primary" id="nextToStep4">
+                            下一步：文档生成 →
+                        </button>
                     </div>
                 </div>
                 
@@ -1140,6 +1159,31 @@
                 });
             });
             
+            // 导航按钮
+            document.getElementById('backToStep1')?.addEventListener('click', function() {
+                goToStep(1);
+            });
+            
+            document.getElementById('nextToStep3')?.addEventListener('click', function() {
+                // 在实际产品中，这里会保存用户修改的澄清内容
+                const q1 = document.getElementById('question1').value;
+                const q2 = document.getElementById('question2').value;
+                const q3 = document.getElementById('question3').value;
+                console.log('保存澄清内容:', { q1, q2, q3 });
+                
+                goToStep(3);
+            });
+            
+            document.getElementById('backToStep2')?.addEventListener('click', function() {
+                goToStep(2);
+            });
+            
+            document.getElementById('nextToStep4')?.addEventListener('click', function() {
+                // 在实际产品中，这里会触发AI价值分析
+                console.log('开始AI价值分析...');
+                goToStep(4);
+            });
+            
             // 文档页面按钮
             document.getElementById('downloadDocBtn')?.addEventListener('click', function() {
                 alert('在实际产品中，这里会下载Markdown/PDF格式的完整文档');
@@ -1211,19 +1255,8 @@
                 contentElement.style.display = 'block';
             }
             
-            // 步骤2到步骤3的自动过渡
-            if (step === 2) {
-                setTimeout(() => {
-                    goToStep(3);
-                }, 2000);
-            }
-            
-            // 步骤3到步骤4的自动过渡
-            if (step === 3) {
-                setTimeout(() => {
-                    goToStep(4);
-                }, 1500);
-            }
+            // 移除自动跳转逻辑
+            // 每一步都需要用户手动确认
             
             console.log(`切换到步骤 ${step}`);
         }

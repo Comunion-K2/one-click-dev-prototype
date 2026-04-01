@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路径验证</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 40px; }
+        .path-item { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .path { color: #666; font-size: 0.9em; }
+        .status { display: inline-block; padding: 4px 8px; border-radius: 4px; margin-left: 10px; }
+        .ok { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .btn { padding: 8px 16px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>路径验证</h1>
+    
+    <div class="path-item">
+        <h3>1. 需求分析页面</h3>
+        <p class="path">期望路径: /pages/demand-system-pro.html</p>
+        <p class="path">实际文件: pages/demand-system-pro.html (根目录)</p>
+        <button class="btn" onclick="testPath('/pages/demand-system-pro.html')">测试</button>
+        <span id="status1" class="status"></span>
+    </div>
+    
+    <div class="path-item">
+        <h3>2. 原型预览页面</h3>
+        <p class="path">期望路径: /prototype/prototype-preview.html</p>
+        <p class="path">实际文件: prototype-preview.html (根目录)</p>
+        <button class="btn" onclick="testPath('/prototype/prototype-preview.html')">测试</button>
+        <span id="status2" class="status"></span>
+    </div>
+    
+    <div class="path-item">
+        <h3>3. 原型编辑器</h3>
+        <p class="path">期望路径: /prototype/prototype-editor.html</p>
+        <p class="path">实际文件: prototype-editor.html (根目录)</p>
+        <button class="btn" onclick="testPath('/prototype/prototype-editor.html')">测试</button>
+        <span id="status3" class="status"></span>
+    </div>
+    
+    <div class="path-item">
+        <h3>4. 其他需求页面</h3>
+        <p class="path">/pages/requirement-analysis-pro-complete.html</p>
+        <button class="btn" onclick="testPath('/pages/requirement-analysis-pro-complete.html')">测试</button>
+        <span id="status4" class="status"></span>
+        
+        <p class="path">/pages/demand-workflow-v3.html</p>
+        <button class="btn" onclick="testPath('/pages/demand-workflow-v3.html')">测试</button>
+        <span id="status5" class="status"></span>
+    </div>
+    
+    <script>
+        async function testPath(path) {
+            const statusId = `status${path.includes('demand-system') ? 1 : 
+                              path.includes('prototype-preview') ? 2 :
+                              path.includes('prototype-editor') ? 3 :
+                              path.includes('complete') ? 4 : 5}`;
+            
+            const statusEl = document.getElementById(statusId);
+            statusEl.textContent = '测试中...';
+            statusEl.className = 'status';
+            
+            try {
+                const response = await fetch(path);
+                if (response.ok) {
+                    statusEl.textContent = '✅ 可访问';
+                    statusEl.className = 'status ok';
+                } else {
+                    statusEl.textContent = `❌ ${response.status}`;
+                    statusEl.className = 'status error';
+                }
+            } catch (error) {
+                statusEl.textContent = '❌ 错误';
+                statusEl.className = 'status error';
+            }
+        }
+        
+        // 自动测试
+        setTimeout(() => {
+            testPath('/pages/demand-system-pro.html');
+            setTimeout(() => testPath('/prototype/prototype-preview.html'), 500);
+            setTimeout(() => testPath('/prototype/prototype-editor.html'), 1000);
+            setTimeout(() => testPath('/pages/requirement-analysis-pro-complete.html'), 1500);
+            setTimeout(() => testPath('/pages/demand-workflow-v3.html'), 2000);
+        }, 1000);
+    </script>
+</body>
+</html>

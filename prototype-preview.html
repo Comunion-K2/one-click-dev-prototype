@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原型预览 | One-Click Dev</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: var(--surface); color: var(--text); }
+        
+        .app-header {
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .project-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .project-name {
+            font-weight: 600;
+        }
+        
+        .version-badge {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .header-btn {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        
+        /* 左侧边栏 */
+        .left-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        
+        .project-list, .demand-list, .page-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .project-item, .demand-header, .page-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.875rem;
+        }
+        
+        .project-item:hover, .demand-header:hover, .page-item:hover {
+            background: var(--surface);
+        }
+        
+        .project-item.active, .page-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .demand-item {
+            margin-bottom: 12px;
+        }
+        
+        .page-list {
+            margin-left: 32px;
+            margin-top: 8px;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* 原型区域 */
+        .prototype-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            background: white;
+        }
+        
+        .prototype-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .prototype-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .prototype-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .prototype-canvas {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: #f1f5f9;
+        }
+        
+        .mobile-preview {
+            width: 375px;
+            height: 667px;
+            background: white;
+            border: 2px solid var(--text);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-header {
+            height: 44px;
+            background: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .mobile-content {
+            padding: 20px;
+            height: calc(100% - 44px);
+            overflow-y: auto;
+        }
+        
+        .preview-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-light);
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .preview-placeholder i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+        
+        /* 需求文档区域 */
+        .document-area {
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+        
+        .document-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .document-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .document-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        
+        .document-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        
+        .section-text {
+            color: var(--text-light);
+            background: var(--surface);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+        
+        /* 调整大小手柄 */
+        .resize-handle {
+            width: 4px;
+            background: var(--border);
+            cursor: col-resize;
+            transition: background 0.2s;
+        }
+        
+        .resize-handle:hover {
+            background: var(--primary);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .document-area {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .prototype-area,
+            .document-area {
+                width: 100%;
+            }
+            
+            .resize-handle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>返回功能列表</span>
+        </a>
+        
+        <div class="project-info">
+            <span class="project-name">电商APP</span>
+            <span class="version-badge">v1.0.3</span>
+        </div>
+        
+        <div class="header-actions">
+            <button class="header-btn">
+                <i class="fas fa-save"></i>
+                <span>保存</span>
+            </button>
+            <button class="header-btn primary" id="enterEditorBtn">
+                <i class="fas fa-expand"></i>
+                <span>进入编辑器</span>
+            </button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <!-- 左侧边栏 -->
+        <aside class="left-sidebar">
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <i class="fas fa-folder"></i>
+                    <span>项目</span>
+                </div>
+                <div class="project-list">
+                    <div class="project-item active">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>电商APP</span>
+                    </div>
+                    <div class="project-item">
+                        <i class="fas fa-plus"></i>
+                        <span>新建项目</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <i class="fas fa-code-branch"></i>
+                    <span>版本: v1.0.3</span>
+                </div>
+                <div class="demand-list">
+                    <div class="demand-item">
+                        <div class="demand-header">
+                            <i class="fas fa-chevron-right"></i>
+                            <span>需求A: 购物车优化</span>
+                        </div>
+                        <div class="page-list">
+                            <div class="page-item active">
+                                <i class="far fa-file"></i>
+                                <span>购物车页面</span>
+                            </div>
+                            <div class="page-item">
+                                <i class="far fa-file"></i>
+                                <span>结算页面</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demand-item">
+                        <div class="demand-header">
+                            <i class="fas fa-chevron-right"></i>
+                            <span>需求B: 搜索功能优化</span>
+                        </div>
+                        <div class="page-list">
+                            <div class="page-item">
+                                <i class="far fa-file"></i>
+                                <span>搜索页面</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <i class="fas fa-layer-group"></i>
+                    <span>所有页面</span>
+                </div>
+                <div class="page-list">
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>首页</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>商品列表</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>商品详情</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>个人中心</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 原型区域 -->
+            <div class="prototype-area">
+                <div class="prototype-header">
+                    <div class="prototype-title">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>原型预览 - 购物车页面</span>
+                    </div>
+                    <div class="prototype-actions">
+                        <button class="action-btn">
+                            <i class="fas fa-download"></i>
+                            <span>导出</span>
+                        </button>
+                        <button class="action-btn">
+                            <i class="fas fa-share"></i>
+                            <span>分享</span>
+                        </button>
+                        <button class="action-btn primary" id="maximizeBtn">
+                            <i class="fas fa-expand"></i>
+                            <span>最大化</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="prototype-canvas">
+                    <div class="mobile-preview">
+                        <div class="mobile-header">
+                            购物车
+                        </div>
+                        <div class="mobile-content">
+                            <div class="preview-placeholder">
+                                <i class="fas fa-shopping-cart"></i>
+                                <p>购物车页面原型预览</p>
+                                <p style="font-size: 0.75rem; margin-top: 10px;">点击"最大化"按钮进入编辑器</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 调整大小手柄 -->
+            <div class="resize-handle" id="resizeHandle"></div>
+            
+            <!-- 需求文档区域 -->
+            <div class="document-area">
+                <div class="document-header">
+                    <div class="document-title">
+                        <i class="fas fa-file-alt"></i>
+                        <span>需求文档</span>
+                    </div>
+                    <div class="prototype-actions">
+                        <button class="action-btn">
+                            <i class="fas fa-edit"></i>
+                            <span>编辑</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="document-content">
+                    <div class="document-section">
+                        <div class="section-label">需求标题</div>
+                        <div class="section-text">购物车页面优化</div>
+                    </div>
+                    
+                    <div class="document-section">
+                        <div class="section-label">需求背景</div>
+                        <div class="section-text">用户反馈购物车操作不够便捷，特别是在批量操作和价格计算方面。当前版本中，用户需要逐个选择商品，无法批量操作，导致购物体验不佳。</div>
+                    </div>
+                    
+                    <div class="document-section">
+                        <div class="section-label">用户痛点</div>
+                        <div class="section-text">
+                            1. 无法批量选择商品<br>
+                            2. 价格计算不实时<br>
+                            3. 优惠券使用不直观<br>
+                            4. 结算流程繁琐
+                        </div>
+                    </div>
+                    
+                    <div class="document-section">
+                        <div class="section-label">解决方案</div>
+                        <div class="section-text">
+                            1. 添加全选/反选功能<br>
+                            2. 实时计算总价<br>
+                            3. 优化优惠券展示<br>
+                            4. 简化结算流程
+                        </div>
+                    </div>
+                    
+                    <div class="document-section">
+                        <div class="section-label">页面元素</div>
+                        <div class="section-text">
+                            - 商品列表（可勾选）<br>
+                            - 价格汇总区域<br>
+                            - 优惠券选择器<br>
+                            - 结算按钮<br>
+                            - 推荐商品区域
+                        </div>
+                    </div>
+                    
+                    <div class="document-section">
+                        <div class="section-label">交互说明</div>
+                        <div class="section-text">
+                            1. 勾选商品时实时更新总价<br>
+                            2. 点击优惠券展开选择面板<br>
+                            3. 结算按钮根据选中状态变化<br>
+                            4. 滑动删除单个商品
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 进入编辑器按钮
+            document.getElementById('enterEditorBtn').addEventListener('click', function() {
+                window.location.href = 'prototype-editor.html';
+            });
+            
+            // 最大化按钮
+            document.getElementById('maximizeBtn').addEventListener('click', function() {
+                window.location.href = 'prototype-editor.html';
+            });
+            
+            // 侧边栏交互
+            document.querySelectorAll('.demand-header').forEach(header => {
+                header.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    const pageList = this.nextElementSibling;
+                    
+                    if (pageList.style.display === 'none' || !pageList.style.display) {
+                        pageList.style.display = 'block';
+                        icon.style.transform = 'rotate(90deg)';
+                    } else {
+                        pageList.style.display = 'none';
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+            
+            // 页面点击
+            document.querySelectorAll('.page-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.page-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 更新页面标题
+                    const pageName = this.querySelector('span').textContent;
+                    document.querySelector('.prototype-title span').textContent = `原型预览 - ${pageName}`;
+                    
+                    // 这里可以加载对应页面的原型和文档
+                });
+            });
+            
+            // 调整大小

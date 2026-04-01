@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>链接测试页面</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+        h1 { color: #333; margin-bottom: 30px; }
+        .link-list { display: flex; flex-direction: column; gap: 20px; }
+        .link-item { padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; }
+        .link-title { font-weight: 600; margin-bottom: 8px; color: #1f2937; }
+        .link-url { color: #6b7280; font-size: 0.875rem; margin-bottom: 12px; word-break: break-all; }
+        .link-status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 500; }
+        .status-ok { background: #d1fae5; color: #065f46; }
+        .status-testing { background: #fef3c7; color: #92400e; }
+        .test-btn { margin-top: 10px; padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.875rem; }
+        .test-btn:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <h1>One-Click Dev 链接测试</h1>
+    <p style="color: #6b7280; margin-bottom: 30px;">测试所有功能链接是否可访问</p>
+    
+    <div class="link-list">
+        <!-- 主页面 -->
+        <div class="link-item">
+            <div class="link-title">1. 主页面（9大功能）</div>
+            <div class="link-url">/prototype/index.html</div>
+            <span class="link-status status-ok">✅ 应该可访问</span>
+            <button class="test-btn" onclick="window.location.href='index.html'">测试访问</button>
+        </div>
+        
+        <!-- 一键需求分析 -->
+        <div class="link-item">
+            <div class="link-title">2. 一键需求分析</div>
+            <div class="link-url">/prototype/pages/demand-system-pro.html</div>
+            <span class="link-status status-testing">🔄 需要测试</span>
+            <button class="test-btn" onclick="window.location.href='pages/demand-system-pro.html'">测试访问</button>
+        </div>
+        
+        <!-- 原型预览页面 -->
+        <div class="link-item">
+            <div class="link-title">3. 原型预览页面</div>
+            <div class="link-url">/prototype/prototype-preview.html</div>
+            <span class="link-status status-testing">🔄 需要测试</span>
+            <button class="test-btn" onclick="window.location.href='prototype-preview.html'">测试访问</button>
+        </div>
+        
+        <!-- 原型编辑器 -->
+        <div class="link-item">
+            <div class="link-title">4. 原型编辑器</div>
+            <div class="link-url">/prototype/prototype-editor.html</div>
+            <span class="link-status status-testing">🔄 需要测试</span>
+            <button class="test-btn" onclick="window.location.href='prototype-editor.html'">测试访问</button>
+        </div>
+        
+        <!-- 返回主页面 -->
+        <div class="link-item">
+            <div class="link-title">5. 返回主页面</div>
+            <div class="link-url">/prototype/index.html</div>
+            <span class="link-status status-ok">✅ 应该可访问</span>
+            <button class="test-btn" onclick="window.location.href='index.html'">返回主页</button>
+        </div>
+    </div>
+    
+    <div style="margin-top: 40px; padding: 20px; background: #f3f4f6; border-radius: 8px;">
+        <h3>问题诊断</h3>
+        <p>如果链接无法访问，可能是以下原因：</p>
+        <ul style="color: #6b7280;">
+            <li>Vercel部署延迟（等待1-2分钟）</li>
+            <li>文件路径错误</li>
+            <li>GitHub同步问题</li>
+            <li>浏览器缓存（Cmd+Shift+R强制刷新）</li>
+        </ul>
+    </div>
+    
+    <script>
+        // 记录测试结果
+        document.querySelectorAll('.test-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const linkItem = this.closest('.link-item');
+                const statusSpan = linkItem.querySelector('.link-status');
+                
+                // 更新状态为测试中
+                statusSpan.textContent = '⏳ 测试中...';
+                statusSpan.className = 'link-status status-testing';
+                
+                // 3秒后恢复
+                setTimeout(() => {
+                    statusSpan.textContent = '✅ 已测试';
+                    statusSpan.className = 'link-status status-ok';
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

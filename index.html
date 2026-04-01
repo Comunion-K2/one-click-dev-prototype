@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One-Click Dev 重定向</title>
+    <meta http-equiv="refresh" content="0; url=/prototype/index.html">
+    <style>
+        body { 
+            font-family: -apple-system, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        .container { max-width: 600px; padding: 40px; }
+        h1 { font-size: 2.5rem; margin-bottom: 20px; }
+        p { font-size: 1.125rem; margin-bottom: 30px; opacity: 0.9; }
+        .links { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
+        .link { 
+            padding: 15px 25px; 
+            background: rgba(255,255,255,0.1); 
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px; 
+            color: white; 
+            text-decoration: none; 
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        .link:hover { 
+            background: rgba(255,255,255,0.2); 
+            transform: translateY(-2px);
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>One-Click Dev</h1>
+        <p>AI原生一键开发平台</p>
+        
+        <div class="spinner"></div>
+        <p>正在跳转到主页面...</p>
+        
+        <div class="links">
+            <a href="/prototype/index.html" class="link">主页面（9大功能）</a>
+            <a href="/pages/demand-system-pro.html" class="link">一键需求分析</a>
+            <a href="/prototype-preview.html" class="link">原型预览页面</a>
+            <a href="/prototype-editor.html" class="link">原型编辑器</a>
+            <a href="/test-all-links.html" class="link">链接测试页面</a>
+        </div>
+    </div>
+    
+    <script>
+        // 如果3秒后还没跳转，显示手动跳转提示
+        setTimeout(() => {
+            document.querySelector('p:last-of-type').innerHTML = 
+                '如果页面没有自动跳转，请点击上面的链接';
+        }, 3000);
+    </script>
+</body>
+</html>

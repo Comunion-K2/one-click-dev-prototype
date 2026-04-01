@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一键需求分析 - One-Click Dev</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --ai: #8b5cf6;
+            --success: #22c55e;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; line-height: 1.6; color: var(--gray-800); background: #f9fafb; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        .navbar { background: white; padding: 16px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .logo { font-size: 1.25rem; font-weight: bold; color: var(--primary); text-decoration: none; }
+        
+        .page-header { padding: 40px 0; text-align: center; }
+        .page-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; color: var(--gray-800); }
+        .page-subtitle { color: #6b7280; max-width: 600px; margin: 0 auto; }
+        
+        .workflow { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin: 40px 0; }
+        .step-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; }
+        .step-number { width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-weight: bold; }
+        
+        .input-section { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 40px 0; }
+        .input-title { font-size: 1.5rem; margin-bottom: 20px; color: var(--gray-800); }
+        textarea { width: 100%; padding: 20px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 1rem; min-height: 150px; font-family: inherit; }
+        textarea:focus { outline: none; border-color: var(--primary); }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 32px; border-radius: 8px; font-size: 1rem; cursor: pointer; margin-top: 20px; }
+        .btn:hover { background: #2563eb; }
+        
+        .analysis-result { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin: 40px 0; display: none; }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .result-title { font-size: 1.5rem; color: var(--gray-800); }
+        
+        .analysis-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .analysis-card { background: var(--gray-100); padding: 25px; border-radius: 8px; }
+        .card-title { font-size: 1.125rem; font-weight: 600; margin-bottom: 15px; color: var(--primary); }
+        
+        .user-stories { margin-top: 40px; }
+        .story-card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+        .story-title { font-weight: 600; margin-bottom: 10px; color: var(--gray-800); }
+        
+        .export-options { display: flex; gap: 15px; margin-top: 30px; }
+        .export-btn { padding: 10px 20px; border: 2px solid var(--primary); background: white; color: var(--primary); border-radius: 6px; cursor: pointer; }
+        .export-btn:hover { background: var(--primary); color: white; }
+        
+        .ai-thinking { background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; display: none; }
+        .thinking-text { color: var(--primary); font-weight: 500; }
+        
+        @media (max-width: 768px) {
+            .workflow { grid-template-columns: 1fr; }
+            .analysis-grid { grid-template-columns: 1fr; }
+            .export-options { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🚀 One-Click Dev</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 页面标题 -->
+        <div class="page-header">
+            <h1 class="page-title">🔍 一键需求分析</h1>
+            <p class="page-subtitle">通过对话描述你的产品想法，AI自动使用5W1H方法分析需求，生成结构化文档和用户故事</p>
+        </div>
+
+        <!-- 工作流程 -->
+        <div class="workflow">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>描述需求</h3>
+                <p>用自然语言描述你想要创建的应用或功能</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>AI分析</h3>
+                <p>AI使用5W1H方法进行结构化分析</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>生成文档</h3>
+                <p>自动生成需求文档和用户故事</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <h3>导出使用</h3>
+                <p>导出为多种格式，供开发使用</p>
+            </div>
+        </div>
+
+        <!-- 输入区域 -->
+        <div class="input-section">
+            <h2 class="input-title">📝 描述你的产品想法</h2>
+            <textarea id="requirementInput" placeholder="例如：我想创建一个在线待办事项应用，可以添加任务、设置优先级、标记完成状态，并且支持团队协作...">我想创建一个在线待办事项应用，可以添加任务、设置优先级、标记完成状态，并且支持团队协作。</textarea>
+            
+            <div class="ai-thinking" id="thinkingIndicator">
+                <div class="thinking-text">🤔 AI正在分析你的需求... (模拟过程)</div>
+            </div>
+            
+            <button class="btn" id="analyzeBtn">🚀 开始AI需求分析</button>
+        </div>
+
+        <!-- 分析结果 -->
+        <div class="analysis-result" id="analysisResult">
+            <div class="result-header">
+                <h2 class="result-title">📋 AI需求分析结果</h2>
+                <div style="color: var(--success); font-weight: 600;">✅ 分析完成</div>
+            </div>
+
+            <!-- 5W1H分析 -->
+            <div class="analysis-grid">
+                <div class="analysis-card">
+                    <h3 class="card-title">What (是什么)</h3>
+                    <p>在线待办事项应用，支持任务管理、优先级设置、完成状态标记和团队协作功能。</p>
+                </div>
+                <div class="analysis-card">
+                    <h3 class="card-title">Who (为谁)</h3>
+                    <p>• 个人用户：管理日常任务<br>• 团队用户：项目协作<br>• 管理者：任务分配和进度跟踪</p>
+                </div>
+                <div class="analysis-card">
+                    <h3 class="card-title">Why (为什么)</h3>
+                    <p>提高个人和团队工作效率，减少任务遗漏，明确责任分工，可视化工作进度。</p>
+                </div>
+                <div class="analysis-card">
+                    <h3 class="card-title">When (何时)</h3>
+                    <p>• 日常任务管理<br>• 项目执行期间<br>• 团队协作场景<br>• 个人时间规划</p>
+                </div>
+                <div class="analysis-card">
+                    <h3 class="card-title">Where (在哪里)</h3>
+                    <p>• Web端：主要工作平台<br>• 移动端：随时查看和添加<br>• 桌面端：深度工作场景</p>
+                </div>
+                <div class="analysis-card">
+                    <h3 class="card-title">How (怎么做)</h3>
+                    <p>通过直观的界面添加任务，设置优先级标签，标记完成状态，分享任务给团队成员。</p>
+                </div>
+            </div>
+
+            <!-- 用户故事 -->
+            <div class="user-stories">
+                <h3 style="font-size: 1.25rem; margin-bottom: 20px; color: var(--gray-800);">👥 生成的用户故事</h3>
+                
+                <div class="story-card">
+                    <div class="story-title">作为个人用户，我希望添加新任务，以便记录需要完成的事项</div>
+                    <p><strong>验收标准：</strong>可以输入任务标题、描述、截止日期；任务成功保存后显示在列表中。</p>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-title">作为用户，我希望设置任务优先级，以便区分重要程度</div>
+                    <p><strong>验收标准：</strong>支持高/中/低优先级标签；不同优先级有不同颜色标识；可按优先级筛选。</p>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-title">作为团队用户，我希望分享任务给同事，以便协作完成</div>
+                    <p><strong>验收标准：</strong>可以选择团队成员分配任务；被分配者收到通知；可查看分配给自己的任务。</p>
+                </div>
+                
+                <div class="story-card">
+                    <div class="story-title">作为用户，我希望标记任务完成状态，以便跟踪进度</div>
+                    <p><strong>验收标准：</strong>可以勾选任务标记为完成；已完成任务有视觉区分；提供完成统计。</p>
+                </div>
+            </div>
+
+            <!-- 导出选项 -->
+            <div class="export-options">
+                <button class="export-btn">📄 导出为Markdown</button>
+                <button class="export-btn">📊 导出为JSON</button>
+                <button class="export-btn">📋 复制到剪贴板</button>
+                <button class="export-btn">🚀 进入下一步：界面生成</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('analyzeBtn').addEventListener('click', function() {
+            const input = document.getElementById('requirementInput').value.trim();
+            if (!input) {
+                alert('请输入需求描述');
+                return;
+            }
+            
+            // 显示AI思考中
+            const thinking = document.getElementById('thinkingIndicator');
+            const result = document.getElementById('analysisResult');
+            
+            thinking.style.display = 'block';
+            this.disabled = true;
+            this.textContent = '分析中...';
+            
+            // 模拟AI分析过程
+            setTimeout(() => {
+                thinking.style.display = 'none';
+                result.style.display = 'block';
+                this.disabled = false;
+                this.textContent = '🚀 开始AI需求分析';
+                
+                // 滚动到结果
+                result.scrollIntoView({ behavior: 'smooth' });
+            }, 2000);
+        });
+        
+        // 示例数据填充
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以在这里预加载示例数据
+            console.log('需求分析页面已加载');
+        });
+    </script>
+</body>
+</html>

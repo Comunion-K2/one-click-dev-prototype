@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>需求工作流Agent | One-Click Dev</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --secondary: #8b5cf6;
+            --surface: #f8fafc;
+            --border: #e5e7eb;
+            --text: #111827;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, sans-serif; 
+            background: #f9fafb; 
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* 布局 */
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* 左侧边栏 */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .new-demand-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: all 0.2s;
+        }
+        
+        .new-demand-btn:hover {
+            background: #2563eb;
+        }
+        
+        .demand-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .demand-item {
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .demand-item:hover {
+            border-color: var(--primary);
+            background: var(--surface);
+        }
+        
+        .demand-item.active {
+            border-color: var(--primary);
+            background: #f0f9ff;
+        }
+        
+        .demand-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .demand-meta {
+            font-size: 0.875rem;
+            color: #666;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* 标题栏 */
+        .header {
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--border);
+            background: white;
+        }
+        
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        /* 工作流时间轴 */
+        .workflow-timeline {
+            display: flex;
+            padding: 20px 32px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+        
+        .timeline-step {
+            display: flex;
+            align-items: center;
+            margin-right: 40px;
+            position: relative;
+        }
+        
+        .timeline-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            right: -28px;
+            width: 20px;
+            height: 2px;
+            background: var(--border);
+        }
+        
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--surface);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .timeline-step.active .step-number {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .step-name {
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        /* 内容区域 */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+            background: var(--surface);
+        }
+        
+        /* 页面1：需求提交 */
+        .demand-input-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .title-input {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            margin-bottom: 24px;
+        }
+        
+        .title-input::placeholder {
+            color: #999;
+        }
+        
+        .demand-input-wrapper {
+            position: relative;
+            background: white;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .demand-textarea {
+            width: 100%;
+            min-height: 200px;
+            border: none;
+            font-size: 1.125rem;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+        }
+        
+        .demand-textarea::placeholder {
+            color: #999;
+        }
+        
+        .send-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .send-button:hover {
+            background: #2563eb;
+            transform: scale(1.05);
+        }
+        
+        .tags-container {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .tag {
+            padding: 8px 16px;
+            background: var(--surface);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            color: #666;
+        }
+        
+        /* 页面2：需求澄清 */
+        .clarification-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .clarification-item {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .clarification-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        
+        .clarification-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: vertical;
+            font-family: inherit;
+        }
+        
+        /* 页面4：价值分析 */
+        .value-analysis-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .north-star-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            border: 2px solid var(--primary);
+        }
+        
+        .north-star-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .metric-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+        
+        .metric-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        
+        /* 页面5：原始需求展示 */
+        .demand-overview-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .overview-card {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+        }
+        
+        .priority-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #f0f9ff;
+            color: var(--primary);
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        /* 页面6：文档生成（双栏） */
+        .document-container {
+            display: flex;
+            height: 100%;
+            gap: 32px;
+        }
+        
+        .original-info {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            overflow-y: auto;
+        }
+        
+        .document-preview {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+        
+        .document-content {
+            font-family: 'SF Mono', monospace;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 200px;
+            }
+            
+            .document-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 左侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">需求工作流</div>
+                <button class="new-demand-btn" id="newDemandBtn">
+                    ＋ 新建需求
+                </button>
+            </div>
+            
+            <div class="demand-list">
+                <div class="demand-item active" data-demand="search-optimization">
+                    <div class="demand-title">优化商品搜索功能</div>
+                    <div class="demand-meta">产品自驱 · 优化 · P1优先级</div>
+                </div>
+                
+                <div class="demand-item" data-demand="user-profile">
+                    <div class="demand-title">完善用户个人资料</div>
+                    <div class="demand-meta">运营 · 新增 · P2优先级</div>
+                </div>
+                
+                <div class="demand-item" data-demand="payment-fix">
+                    <div class="demand-title">修复支付页面错误</div>
+                    <div class="demand-meta">客服 · 修复 · P0优先级</div>
+                </div>
+                
+                <div class="demand-item" data-demand="seo-optimization">
+                    <div class="demand-title">SEO页面优化</div>
+                    <div class="demand-meta">产品自驱 · 优化 · P1优先级</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 标题栏 -->
+            <div class="header">
+                <div class="header-title">需求工作流Agent</div>
+            </div>
+            
+            <!-- 工作流时间轴 -->
+            <div class="workflow-timeline">
+                <div class="timeline-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-name">需求提交</div>
+                </div>
+                
+                <div class="timeline-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-name">需求澄清</div>
+                </div>
+                
+                <div class="timeline-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-name">需求池</div>
+                </div>
+                
+                <div class="timeline-step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-name">价值分析</div>
+                </div>
+                
+                <div class="timeline-step" data-step="5">
+                    <div class="step-number">5</div>
+                    <div class="step-name">原始需求</div>
+                </div>
+                
+                <div class="timeline-step" data-step="6">
+                    <div class="step-number">6</div>
+                    <div class="step-name">文档生成</div>
+                </div>
+            </div>
+            
+            <!-- 内容区域 -->
+            <div class="content-area" id="contentArea">
+                <!-- 页面1：需求提交 -->
+                <div class="demand-input-container" id="step1Content">
+                    <input type="text" class="title-input" placeholder="你想..." value="优化商品搜索功能">
+                    
+                    <div class="demand-input-wrapper">
+                        <textarea class="demand-textarea" placeholder="请输入一句话描述你的需求..." id="demandInput">当前商品搜索功能不够智能，用户找不到想要的商品，导致转化率低。</textarea>
+                        <button class="send-button" id="sendDemandBtn">
+                            →
+                        </button>
+                    </div>
+                    
+                    <div class="tags-container">
+                        <div class="tag">功能：搜索优化</div>
+                        <div class="tag">需求类型：优化</div>
+                        <div class="tag">来源：产品自驱</div>
+                    </div>
+                </div>
+                
+                <!-- 页面2：需求澄清 -->
+                <div class="clarification-container" id="step2Content" style="display: none;">
+                    <div class="clarification-item">
+                        <div class="clarification-title">具体业务场景是什么？</div>
+                        <textarea class="clarification-input">用户在电商平台搜索商品时，搜索结果不够准确，用户需要翻多页才能找到想要的商品。特别是在大促期间，搜索流量大但转化率低。</textarea>
+                    </div>
+                    
+                    <div class="clarification-item">
+                        <div class="clarification-title">要解决的具体问题是什么？</div>
+                        <textarea class="clarification-input">1. 搜索准确率低，相关度排序不合理
+2. 搜索建议不够智能，不能理解用户意图
+3. 缺少个性化推荐，所有用户看到相同结果
+4. 搜索页面加载速度慢，影响用户体验</textarea>
+                    </div>
+                    
+                    <div class="clarification-item">
+                        <div class="clarification-title">期望达成什么业务目标？</div>
+                        <textarea class="clarification-input">1. 搜索转化率提升8-12%
+2. GMV月增加¥50,000-80,000
+3. 用户搜索满意度提升15-20%
+4. 搜索功能使用率提升10%</textarea>
+                    </div>
+                </div>
+                
+                <!-- 页面4：价值分析 -->
+                <div class="value-analysis-container" id="step4Content" style="display: none;">
+                    <!-- 北极星指标 -->
+                    <div class="north-star-card">
+                        <div class="north-star-title">⭐ 北极星指标：GMV（商品交易总额）</div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--primary); margin: 16px 0;">
+                            +¥50,000-80,000/月
+                        </div>
+                        <div style="color: #666;">
+                            <strong>影响路径</strong>：搜索准确率提升 → 用户找到商品更容易 → 购买转化率提高 → GMV增长
+                        </div>
+                    </div>
+                    
+                    <!-- 可视化图表区域 -->
+                    <div class="overview-card">
+                        <div class="metric-title">📊 核心指标影响</div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-top: 20px;">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px;">DAU影响</div>
+                                <div style="font-size: 1.5rem; color: var(--primary);">+3-5%</div>
+                                <div style="font-size: 0.875rem; color: #666;">置信度：高</div>
+                            </div>
+                            
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px;">搜索转化率</div>
+                                <div style="font-size: 1.5rem; color: var(--primary);">+8-12%</div>
+                                <div style="font-size: 0.875rem; color: #666;">置信度：中</div>
+                            </div>
+                            
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px;">用户满意度</div>
+                                <div style="font-size: 1.5rem; color: var(--primary);">+15-20%</div>
+                                <div style="font-size: 0.875rem; color: #666;">置信度：高</div>
+                            </div>
+                            
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 8px;">页面停留时长</div>
+                                <div style="font-size: 1.5rem; color: var(--primary);">+20-30秒</div>
+                                <div style="font-size: 0.875rem; color: #666;">置信度：中</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- SEO分析 -->
+                    <div class="overview-card">
+                        <div class="metric-title">🔍 SEO分析</div>
+                        <div style="margin-top: 16px;">
+                            <div style="margin-bottom: 12px;">
+                                <strong>页面优化</strong>：搜索结果页需要优化标题、Meta描述、结构化数据
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <strong>内容优化</strong>：商品详情页需要丰富内容，提高关键词密度
+                            </div>
+                            <div>
+                                <strong>技术优化</strong>：页面加载速度需要优化，目标LCP < 2.5s
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- GEO分析 -->
+                    <div class="overview-card">
+                        <div class="metric-title">🤖 GEO分析（AI搜索引擎优化）</div>
+                        <div style="margin-top: 16px;">
+                            <div style="margin-bottom: 12px;">
+                                <strong>内容结构化</strong>：商品信息需要结构化展示，便于AI提取
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <strong>问答优化</strong>：常见问题需要Q&A格式，便于AI回答
+                            </div>
+                            <div>
+                                <strong>权威性建立</strong>：引用权威商品数据和用户评价
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 页面5：原始需求展示 -->
+                <div class="demand-overview-container" id="step5Content" style="display: none;">
+                    <div class="overview-card">
+                        <div class="priority-badge">P1优先级</div>
+                        
+                        <h2 style="margin-bottom: 20px;">优化商品搜索功能</h2>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">原始需求描述</div>
+                            <div style="color: #666; line-height: 1.6;">
+                                当前商品搜索功能不够智能，用户找不到想要的商品，导致转化率低。需要优化搜索算法，提高搜索准确性和个性化推荐。
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">业务场景</div>
+                            <div style="color: #666; line-height: 1.6;">
+                                用户在电商平台搜索商品时，搜索结果不够准确，用户需要翻多页才能找到想要的商品。特别是在大促期间，搜索流量大但转化率低。
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">核心目标</div>
+                            <div style="color: #666; line-height: 1.6;">
+                                1. 搜索转化率提升8-12%<br>
+                                2. GMV月增加¥50,000-80,000<br>
+                                3. 用户搜索满意度提升15-20%
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 8px;">数据埋点需求</div>
+                            <div style="color: #666; line-height: 1.6;">
+                                - 搜索关键词统计<br>
+                                - 搜索结果点击率<br>
+                                - 搜索到购买的转化路径<br>
+                                - A/B测试分组数据
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 页面6：文档生成（双栏） -->
+                <div class="document-container" id="step6Content" style="display: none;">
+                    <!-- 左侧：原始信息 -->
+                    <div class="original-info">
+                        <h3 style="margin-bottom: 20px;">📋 原始需求信息</h3>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">需求标题</div>
+                            <div>优化商品搜索功能</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">需求描述</div>
+                            <div>当前商品搜索功能不够智能，用户找不到想要的商品，导致转化率低。</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">业务场景</div>
+                            <div>用户在电商平台搜索商品时，搜索结果不够准确，用户需要翻多页才能找到想要的商品。</div>
+                        </div>
+                        
+                        <div style="margin-bottom: 24px;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">核心目标</div>
+                            <div>搜索转化率提升8-12%，GMV月增加¥50,000-80,000</div>
+                        </div>
+                        
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 8px;">优先级</div>
+                            <div class="priority-badge" style="display: inline-block;">P1优先级</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 右侧：文档预览 -->
+                    <div class="document-preview">
+                        <h3 style="margin-bottom: 20px;">📄 需求分析文档</h3>
+                        
+                        <div class="document-content">
+# 优化商品搜索功能 - 需求分析文档
+
+## 1. 需求概述
+- **需求ID**: REQ-001
+- **需求类型**: 优化
+- **业务场景**: 电商平台商品搜索
+- **来源**: 产品自驱
+- **优先级**: P1
+
+## 2. 用户故事
+**作为** 电商平台用户
+**我想要** 快速准确地找到想要的商品
+**以便** 完成购买，节省时间
+
+## 3. 价值分析
+### 3.1 北极星指标
+- **GMV**: 预期月增加 ¥50,000-80,000
+- **影响路径**: 搜索准确率提升 → 购买转化率提高 → GMV增长
+
+### 3.2 核心指标影响
+- **DAU**: +3-5% (置信度: 高)
+- **搜索转化率**: +8-12% (置信度: 中)
+- **用户满意度**: +15-20% (置信度: 高)
+- **页面停留时长**: +20-30秒 (置信度: 中)
+
+## 4. SEO/GEO分析
+### 4.1 SEO优化
+- 搜索结果页标题和Meta优化
+- 商品详情页内容丰富度提升
+- 页面加载速度优化 (LCP < 2.5s)
+
+### 4.2 GEO优化
+- 商品信息结构化展示
+- 常见问题Q&A格式
+- 权威数据引用
+
+## 5. 数据埋点
+- 搜索关键词统计
+- 搜索结果点击率
+- 搜索到购买转化路径
+- A/B测试分组数据
+
+## 6. 实施建议
+- **开发周期**: 3-4周
+- **资源需求**: 2前端 + 1后端 + 1算法
+- **A/B测试**: 50%流量测试
+- **监控指标**: 搜索转化率、GMV、用户满意度
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 当前步骤和需求
+        let currentStep = 1;
+        let currentDemand = 'search-optimization';
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('需求工作流Agent v3.0 已加载');
+            
+            // 新建需求按钮
+            document.getElementById('newDemandBtn').addEventListener('click', function() {
+                resetToNewDemand();
+            });
+            
+            // 需求列表点击
+            document.querySelectorAll('.demand-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const demandId = this.dataset.demand;
+                    switchDemand(demandId);
+                });
+            });
+            
+            // 发送需求按钮
+            document.getElementById('sendDemandBtn').addEventListener('click', function() {
+                submitDemand();
+            });
+            
+            // 需求输入框键盘事件
+            document.getElementById('demandInput').addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    submitDemand();
+                }
+                // shift+enter 保持默认行为（换行）
+            });
+            
+            // 时间轴点击
+            document.querySelectorAll('.timeline-step').forEach(step => {
+                step.addEventListener('click', function() {
+                    const stepNum = parseInt(this.dataset.step);
+                    goToStep(stepNum);
+                });
+            });
+        });
+        
+        function resetToNewDemand() {
+            // 清空输入
+            document.querySelector('.title-input').value = '';
+            document.getElementById('demandInput').value = '';
+            
+            // 重置到步骤1
+            goToStep(1);
+            
+            // 更新需求列表选中状态
+            document.querySelectorAll('.demand-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            console.log('开始新的需求');
+        }
+        
+        function switchDemand(demandId) {
+            currentDemand = demandId;
+            
+            // 更新需求列表选中状态
+            document.querySelectorAll('.demand-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.demand === demandId) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // 根据需求ID加载对应数据
+            loadDemandData(demandId);
+            
+            console.log(`切换到需求: ${demandId}`);
+        }
+        
+        function loadDemandData(demandId) {
+            // 在实际产品中，这里会从服务器加载需求数据
+            // 当前为演示，直接跳转到步骤5（原始需求展示）
+            goToStep(5);
+        }
+        
+        function submitDemand() {
+            const title = document.querySelector('.title-input').value.trim();
+            const content = document.getElementById('demandInput').value.trim();
+            
+            if (!title || !content) {
+                alert('请填写需求标题和描述');
+                return;
+            }
+            
+            console.log('提交需求:', { title, content });
+            
+            // 模拟AI处理，跳转到步骤2
+            setTimeout(() => {
+                goToStep(2);
+            }, 500);
+        }
+        
+        function goToStep(step) {
+            currentStep = step;
+            
+            // 更新时间轴
+            document.querySelectorAll('.timeline-step').forEach(timelineStep => {
+                timelineStep.classList.remove('active');
+                if (parseInt(timelineStep.dataset.step) === step) {
+                    timelineStep.classList.add('active');
+                }
+            });
+            
+            // 隐藏所有内容
+            document.querySelectorAll('#contentArea > div').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // 显示当前步骤内容
+            const contentId = `step${step}Content`;
+            const contentElement = document.getElementById(contentId);
+            if (contentElement) {
+                contentElement.style.display = 'block';
+            }
+            
+            // 步骤3（需求池）自动处理，跳转到步骤4
+            if (step === 3) {
+                setTimeout(() => {
+                    goToStep(4);
+                }, 1000);
+            }
+            
+            console.log(`切换到步骤 ${step}`);
+        }
+        
+        // 页面加载后自动聚焦输入框
+        window.addEventListener('load', function() {
+            document.getElementById('demandInput').focus();
+        });
+    </script>
+</body>
+</html>

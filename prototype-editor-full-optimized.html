@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一键原型生成 | AutoResearch全功能优化版</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --success: #10b981;
+            --ai: #8b5cf6;
+            --warning: #f59e0b;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: #f9fafb; color: var(--gray-800); }
+        
+        .version-banner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .optimization-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+        
+        .editor-header {
+            background: white;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .editor-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .editor-container {
+            display: flex;
+            height: calc(100vh - 104px);
+        }
+        
+        /* 左侧组件库 */
+        .component-sidebar {
+            width: 320px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .component-search {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .component-categories {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+        }
+        
+        .category-tab {
+            padding: 8px 16px;
+            background: var(--gray-100);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        
+        .category-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .component-grid {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .component-item {
+            background: var(--gray-100);
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+            cursor: grab;
+            transition: all 0.2s;
+        }
+        
+        .component-item:hover {
+            border-color: var(--primary);
+            background: #e0e7ff;
+        }
+        
+        .component-variants {
+            margin-top: 8px;
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+        }
+        
+        .variant-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #9ca3af;
+            cursor: pointer;
+        }
+        
+        .variant-dot.active {
+            background: var(--primary);
+        }
+        
+        /* 中间画布区域 */
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f1f5f9;
+        }
+        
+        .canvas-toolbar {
+            padding: 12px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .toolbar-btn {
+            padding: 8px 16px;
+            background: var(--gray-100);
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .toolbar-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .canvas-container {
+            flex: 1;
+            padding: 40px;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        
+        .mobile-frame {
+            width: 375px;
+            height: 667px;
+            background: white;
+            border: 2px solid var(--gray-800);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        
+        .mobile-header {
+            height: 44px;
+            background: var(--gray-800);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .mobile-content {
+            padding: 20px;
+            height: calc(100% - 44px);
+            position: relative;
+        }
+        
+        /* 优化后的拖拽组件 */
+        .draggable-component {
+            position: absolute;
+            cursor: move;
+            user-select: none;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 80px;
+            min-height: 40px;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .draggable-component.dragging {
+            z-index: 1000;
+            opacity: 0.9;
+            transform: scale(1.02);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border-color: var(--primary);
+        }
+        
+        .component-selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* 智能对齐线 */
+        .alignment-line {
+            position: absolute;
+            background: var(--primary);
+            z-index: 999;
+        }
+        
+        .alignment-line.horizontal {
+            height: 1px;
+            width: 100%;
+        }
+        
+        .alignment-line.vertical {
+            width: 1px;
+            height: 100%;
+        }
+        
+        /* 右侧属性面板 */
+        .properties-sidebar {
+            width: 350px;
+            background: white;
+            border-left: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .properties-tabs {
+            display: flex;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .property-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .property-tab.active {
+            border-bottom: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .properties-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .property-group {
+            margin-bottom: 24px;
+        }
+        
+        .property-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .property-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .property-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            min-width: 80px;
+        }
+        
+        .property-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+        
+        .property-color {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            cursor: pointer;
+        }
+        
+        .variant-selector {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .variant-option {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        
+        .variant-option.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* 优化信息面板 */
+        .optimization-panel {
+            padding: 20px;
+            border-top: 1px solid #e5e7eb;
+            background: #f8fafc;
+        }
+        
+        .optimization-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--ai);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .optimization-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.75rem;
+        }
+        
+        .optimization-name {
+            color: #6b7280;
+        }
+        
+        .optimization-value {
+            font-weight: 600;
+            color: var(--success);
+        }
+        
+        /* 点击反馈动画 */
+        @keyframes clickFeedback {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        .click-animation {
+            animation: clickFeedback 0.2s ease;
+        }
+        
+        /* 过渡动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .editor-container {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .component-sidebar,
+            .properties-sidebar {
+                width: 100%;
+                height: 300px;
+            }
+            
+            .mobile-frame {
+                transform: scale(0.8);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="version-banner">
+        <i class="fas fa-robot"></i>
+        <span>AutoResearch 全功能优化版 v2.5</span>
+        <span class="optimization-badge">10大功能AI优化 | 平均改进 +15.2%</span>
+    </div>
+    
+    <header class="editor-header">
+        <a href="/autoresearch-reports/full-optimization-report.html" class="back-btn" target="_blank">
+            <i class="fas fa-arrow-left"></i>
+            <span>查看完整优化报告</span>
+        </a>
+        <h1 class="editor-title">一键原型生成编辑器</h1>
+        <div style="display: flex; gap: 12px;">
+            <button class="toolbar-btn" onclick="saveProject()">
+                <i class="fas fa-save"></i>
+                <span>保存</span>
+            </button>
+            <button class="toolbar-btn" onclick="exportProject()">
+                <i class="fas fa-download"></i>
+                <span>导出</span>
+            </button>
+            <button class="toolbar-btn" onclick="toggleCollaboration()">
+                <i class="fas fa-users"></i>
+                <span>协作模式</span>
+            </button>
+        </div>
+    </header>
+    
+    <div class="editor-container">
+        <!-- 左侧组件库 -->
+        <aside class="component-sidebar">
+            <div class="component-search">
+                <input type="text" class="search-input" placeholder="搜索组件..." id="componentSearch">
+            </div>
+            
+            <div class="component-categories">
+                <div class="category-tabs">
+                    <div class="category-tab active" data-category="basic">基础组件</div>
+                    <div class="category-tab" data-category="form">表单组件</div>
+                    <div class="category-tab" data-category="layout">布局组件</div>
+                    <div class="category-tab" data-category="media">媒体组件</div>
+                    <div class="category-tab" data-category="ai">AI生成</div>
+                </div>
+            </div>
+            
+            <div class="component-grid" id="componentGrid">
+                <!-- 组件会通过JavaScript动态生成 -->
+            </div>
+        </aside>
+        
+        <!-- 中间画布 -->
+        <main class="canvas-area">
+            <div class="canvas-toolbar">
+                <button class="toolbar-btn active" onclick="setTool('select')">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <span>选择</span>
+                </button>
+                <button class="toolbar-btn" onclick="setTool('align')">
+                    <i class="fas fa-align-left"></i>
+                    <span>对齐</span>
+                </button>
+                <button class="toolbar-btn" onclick="setTool('grid')">
+                    <i class="fas fa-th"></i>
+                    <span>网格</span>
+                </button>
+                <button class="toolbar-btn" onclick="toggleSmartLayout()">
+                    <i class="fas fa-magic"></i>
+                    <span>智能布局</span>
+                </button>
+                <button class="toolbar-btn" onclick="generateFlowDiagram()">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>生成流程图</span>
+                </button>
+                
+                <div style="margin-left: auto; display: flex; gap: 8px;">
+                    <button class="toolbar-btn" onclick="undo()">
+                        <i class="fas fa-undo"></i>
+                    </button>
+                    <button class="toolbar-btn" onclick="redo()">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="toolbar-btn" onclick="showVersionHistory()">
+                        <i class="fas fa-history"></i>
+                        <span>版本历史</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <div class="mobile-frame">
+                    <div class="mobile-header">
+                        原型画布 - 体验AI优化功能
+                    </div>
+                    <div class="mobile-content" id="prototypeCanvas">
+                        <!-- 这里会动态添加组件 -->
+                        <div class="draggable-component component-selected fade-in" 
+                             style="left: 40px; top: 40px; width: 120px; height: 48px; background: var(--primary); color: white; text-align: center; line-height: 48px; border-radius: 12px;"
+                             data-component-id="btn-1"
+                             onclick="selectComponent(this)">
+                            主要按钮
+                        </div>
+                        
+                        <div class="draggable-component fade-in" 
+                             style="left: 40px; top: 120px; width: 295px; height: 120px; background: white; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"
+                             data-component-id="card-1"
+                             onclick="selectComponent(this)">
+                            <div style="font-weight: 600; font-size: 1.125rem; margin-bottom: 12px;">产品卡片</div>
+                            <div style="font-size: 0.875rem; color: #6b7280; line-height: 1.5;">
+                                这是一个经过AI优化的产品卡片组件，支持拖拽、对齐和智能布局。
+                            </div>
+                        </div>
+                        
+                        <div class="draggable-component fade-in" 
+                             style="left: 40px; top: 280px; width: 295px; height: 48px; background: #f3f4f6; border: 1px solid #

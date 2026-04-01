@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一键原型预览 | One-Click Dev</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: var(--surface); color: var(--text); }
+        
+        .app-header {
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .project-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .project-name {
+            font-weight: 600;
+        }
+        
+        .version-badge {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .header-btn {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        
+        /* 左侧边栏 */
+        .left-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        
+        .project-list, .demand-list, .page-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .project-item, .demand-header, .page-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.875rem;
+        }
+        
+        .project-item:hover, .demand-header:hover, .page-item:hover {
+            background: var(--surface);
+        }
+        
+        .project-item.active, .page-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .demand-item {
+            margin-bottom: 12px;
+        }
+        
+        .page-list {
+            margin-left: 32px;
+            margin-top: 8px;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* 原型区域 */
+        .prototype-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            background: white;
+        }
+        
+        .prototype-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .prototype-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .prototype-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 6px 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .prototype-canvas {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            background: #f1f5f9;
+        }
+        
+        .mobile-frame {
+            width: 375px;
+            height: 667px;
+            background: white;
+            border: 2px solid var(--text);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-header {
+            height: 44px;
+            background: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .mobile-content {
+            padding: 20px;
+            height: calc(100% - 44px);
+            overflow-y: auto;
+        }
+        
+        /* 真实电商原型 */
+        .ecommerce-prototype {
+            width: 100%;
+        }
+        
+        .product-item {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            background: white;
+        }
+        
+        .product-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .product-info {
+            flex: 1;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .product-price {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .product-quantity {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .quantity-btn {
+            width: 24px;
+            height: 24px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .quantity-input {
+            width: 40px;
+            text-align: center;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px;
+        }
+        
+        .cart-summary {
+            background: var(--surface);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+        
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .summary-total {
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: var(--primary);
+            border-top: 1px solid var(--border);
+            padding-top: 12px;
+            margin-top: 12px;
+        }
+        
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+        }
+        
+        /* 需求文档区域 */
+        .document-area {
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            background: white;
+        }
+        
+        .document-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .document-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .document-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        
+        .document-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-size: 0.875rem;
+        }
+        
+        .section-text {
+            color: var(--text-light);
+            background: var(--surface);
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: 0.75rem;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .feature-list li {
+            padding: 4px 0;
+            position: relative;
+            padding-left: 20px;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+        
+        .user-journey-step {
+            background: var(--surface);
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--primary);
+        }
+        
+        .journey-step-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+        
+        .journey-step-desc {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+        
+        .function-map {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .function-item {
+            background: var(--surface);
+            padding: 8px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.75rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .document-area {
+                width: 300px;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .prototype-area,
+            .document-area {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <a href="/index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>返回文件管理</span>
+        </a>
+        
+        <div class="project-info">
+            <span class="project-name">电商APP - 购物车优化</span>
+            <span class="version-badge">v1.0.3</span>
+        </div>
+        
+        <div class="header-actions">
+            <button class="header-btn">
+                <i class="fas fa-download"></i>
+                <span>导出</span>
+            </button>
+            <button class="header-btn primary" id="enterEditorBtn">
+                <i class="fas fa-expand"></i>
+                <span>进入编辑器</span>
+            </button>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <!-- 左侧边栏 -->
+        <aside class="left-sidebar">
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <i class="fas fa-folder"></i>
+                    <span>项目</span>
+                </div>
+                <div class="project-list">
+                    <div class="project-item active">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>电商APP</span>
+                    </div>
+                    <div class="project-item">
+                        <i class="fas fa-plus"></i>
+                        <span>新建项目</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <i class="fas fa-code-branch"></i>
+                    <span>版本: v1.0.3</span>
+                </div>
+                <div class="demand-list">
+                    <div class="demand-item">
+                        <div class="demand-header">
+                            <i class="fas fa-chevron-right"></i>
+                            <span>需求A: 购物车优化</span>
+                        </div>
+                        <div class="page-list">
+                            <div class="page-item active">
+                                <i class="far fa-file"></i>
+                                <span>购物车页面</span>
+                            </div>
+                            <div class="page-item">
+                                <i class="far fa-file"></i>
+                                <span>结算页面</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="demand-item">
+                        <div class="demand-header">
+                            <i class="fas fa-chevron-right"></i>
+                            <span>需求B: 搜索功能优化</span>
+                        </div>
+                        <div class="page-list">
+                            <div class="page-item">
+                                <i class="far fa-file"></i>
+                                <span>搜索页面</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-header">
+                    <i class="fas fa-layer-group"></i>
+                    <span>所有页面</span>
+                </div>
+                <div class="page-list">
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>首页</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>商品列表</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>商品详情</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>个人中心</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 原型区域 -->
+            <div class="prototype-area">
+                <div class="prototype-header">
+                    <div class="prototype-title">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>购物车页面原型</span>
+                    </div>
+                    <div class="prototype-actions">
+                        <button class="action-btn">
+                            <i class="fas fa-download"></i>
+                            <span>导出</span>
+                        </button>
+                        <button class="action-btn">
+                            <i class="fas fa-share"></i>
+                            <span>分享</span>
+                        </button>
+                        <button class="action-btn primary" id="maximizeBtn">
+                            <i class="fas fa-expand"></i>
+                            <span>最大化编辑</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="prototype-canvas">
+                    <div class="mobile-frame">
+                        <div class="mobile-header">
+                            购物车
+                        </div>
+                        <div class="mobile-content">
+                            <div class="ecommerce-prototype">
+                                <!-- 商品1 -->
+                                <div class="product-item">
+                                    <div class="product-image">
+                                        <i class="fas fa-tshirt"></i>
+                                    </div>
+                                    <div class="product-info">
+                                        <div class="product-name">男士纯棉T恤</div>
+                                        <div class="product-price">¥129.00</div>
+                                        <div class="product-quantity">
+                                            <button class="quantity-btn">-</button>
+                                            <input type="text" class="quantity-input" value="1">
+                                            <button class="quantity-btn">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 商品2 -->
+                                <div class="product-item">
+                                    <div class="product-image">
+                                        <i class="fas fa-shoe-prints"></i>
+                                    </div>
+                                    <div class="product-info">
+                                        <div class="product-name">运动跑步鞋</div>
+                                        <div class="product-price">¥399.00</div>
+                                        <div class="product-quantity">
+                                            <button class="quantity-btn">-</button>
+                                            <input type="text" class="quantity-input" value="2">
+                                            <button class="quantity-btn">+</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 商品3 -->
+                                <div class="product-item">
+                                    <div class="product-image">
+                                        <i class="fas fa-headphones"></i>
+                                    </div>
+                                    <</div></div></div>

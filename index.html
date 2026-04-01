@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One-Click Dev | 文件管理</title>
+    <title>One-Click Dev | 版本管理</title>
     <style>
         :root {
             --primary: #3b82f6;
@@ -25,8 +25,8 @@
         .section { margin-bottom: 40px; }
         .section-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: var(--text); }
         
-        .file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .file-card { 
+        .version-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .version-card { 
             background: white; 
             padding: 24px; 
             border-radius: 12px; 
@@ -36,19 +36,19 @@
             color: inherit;
             display: block;
         }
-        .file-card:hover { 
+        .version-card:hover { 
             border-color: var(--primary); 
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
         }
         
-        .file-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-        .file-icon { width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
-        .file-info { flex: 1; }
-        .file-name { font-weight: 600; margin-bottom: 4px; }
-        .file-version { font-size: 0.875rem; color: var(--text-light); }
+        .version-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .version-icon { width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+        .version-info { flex: 1; }
+        .version-name { font-weight: 600; margin-bottom: 4px; }
+        .version-number { font-size: 0.875rem; color: var(--text-light); }
         
-        .file-desc { font-size: 0.875rem; color: var(--text-light); line-height: 1.5; }
+        .version-desc { font-size: 0.875rem; color: var(--text-light); line-height: 1.5; margin-bottom: 12px; }
         
         .status-badge { 
             display: inline-block; 
@@ -56,138 +56,181 @@
             border-radius: 4px; 
             font-size: 0.75rem; 
             font-weight: 500; 
-            margin-top: 12px;
         }
         .status-latest { background: #d1fae5; color: #065f46; }
         .status-archived { background: #f3f4f6; color: #6b7280; }
         
-        .back-btn { 
-            display: inline-flex; 
-            align-items: center; 
-            gap: 8px; 
-            color: var(--primary); 
-            text-decoration: none; 
-            font-weight: 500;
+        .latest-section {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+        }
+        
+        .latest-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .latest-desc {
+            opacity: 0.9;
             margin-bottom: 20px;
         }
         
+        .latest-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
         @media (max-width: 768px) {
-            .file-grid { grid-template-columns: 1fr; }
+            .version-grid { grid-template-columns: 1fr; }
             .title { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <a href="https://one-click-dev-prototype.vercel.app/prototype/index.html" class="back-btn">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span>返回功能列表</span>
-        </a>
-        
         <div class="header">
-            <h1 class="title">One-Click Dev 文件管理</h1>
+            <h1 class="title">One-Click Dev 版本管理</h1>
             <p class="subtitle">清晰的文件版本管理，避免重复和混乱</p>
+        </div>
+        
+        <!-- 最新版本推荐 -->
+        <div class="latest-section">
+            <h2 class="latest-title">🚀 最新推荐版本</h2>
+            <p class="latest-desc">经过多次迭代优化，这是当前最稳定、功能最完整的版本</p>
+            <a href="/prototype/index.html" class="latest-link">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 3V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <span>访问最新主页面</span>
+            </a>
         </div>
         
         <!-- 需求分析页面 -->
         <div class="section">
-            <h2 class="section-title">一键需求分析</h2>
-            <div class="file-grid">
-                <a href="/pages/demand-analysis-01.html" class="file-card">
-                    <div class="file-header">
-                        <div class="file-icon">📋</div>
-                        <div class="file-info">
-                            <div class="file-name">需求分析 v1.0</div>
-                            <div class="file-version">版本 01 - 独立页面</div>
+            <h2 class="section-title">需求分析页面</h2>
+            <div class="version-grid">
+                <a href="/requirement/requirement-01.html" class="version-card">
+                    <div class="version-header">
+                        <div class="version-icon">📋</div>
+                        <div class="version-info">
+                            <div class="version-name">需求分析 v1.0</div>
+                            <div class="version-number">版本 01 - 基础需求分析</div>
                         </div>
                     </div>
-                    <p class="file-desc">独立原型页面，左侧导航 + 中间原型 + 右边PRD文档</p>
+                    <p class="version-desc">基础需求分析页面，包含需求输入、分析输出和工作流程</p>
+                    <span class="status-badge status-archived">归档版本</span>
+                </a>
+                
+                <a href="/prototype/prototype-01.html" class="version-card">
+                    <div class="version-header">
+                        <div class="version-icon">🤖</div>
+                        <div class="version-info">
+                            <div class="version-name">需求分析 v2.0</div>
+                            <div class="version-number">版本 02 - 工作流Agent</div>
+                        </div>
+                    </div>
+                    <p class="version-desc">需求工作流Agent，5步工作流程，专业PRD生成</p>
+                    <span class="status-badge status-latest">最新版本</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 一键原型页面 -->
+        <div class="section">
+            <h2 class="section-title">一键原型页面</h2>
+            <div class="version-grid">
+                <a href="/prototype/prototype-01.html" class="version-card">
+                    <div class="version-header">
+                        <div class="version-icon">📱</div>
+                        <div class="version-info">
+                            <div class="version-name">一键原型 v1.0</div>
+                            <div class="version-number">版本 01 - 原型预览</div>
+                        </div>
+                    </div>
+                    <p class="version-desc">原型预览页面，左侧导航 + 中间原型 + 右边PRD文档</p>
                     <span class="status-badge status-latest">最新版本</span>
                 </a>
                 
-                <a href="/pages/demand-analysis-02.html" class="file-card">
-                    <div class="file-header">
-                        <div class="file-icon">🤖</div>
-                        <div class="file-info">
-                            <div class="file-name">需求分析 v2.0</div>
-                            <div class="file-version">版本 02 - 增强编辑器</div>
+                <a href="/prototype/edit/edit-01.html" class="version-card">
+                    <div class="version-header">
+                        <div class="version-icon">🎨</div>
+                        <div class="version-info">
+                            <div class="version-name">原型编辑器 v1.0</div>
+                            <div class="version-number">版本 01 - 基础编辑器</div>
                         </div>
                     </div>
-                    <p class="file-desc">增强版原型编辑器，集成TDesign和AI生成功能</p>
-                    <span class="status-badge status-archived">开发中</span>
-                </a>
-            </div>
-        </div>
-        
-        <!-- 原型生成页面 -->
-        <div class="section">
-            <h2 class="section-title">一键原型生成</h2>
-            <div class="file-grid">
-                <a href="/pages/prototype-01.html" class="file-card">
-                    <div class="file-header">
-                        <div class="file-icon">📱</div>
-                        <div class="file-info">
-                            <div class="file-name">原型生成 v1.0</div>
-                            <div class="file-version">版本 01 - 基础编辑器</div>
-                        </div>
-                    </div>
-                    <p class="file-desc">基础原型编辑器，支持拖拽组件和属性调整</p>
+                    <p class="version-desc">从原型预览页面的"最大化"按钮进入，支持拖拽编辑</p>
                     <span class="status-badge status-archived">基础版本</span>
                 </a>
-                
-                <a href="/pages/prototype-02.html" class="file-card">
-                    <div class="file-header">
-                        <div class="file-icon">🎨</div>
-                        <div class="file-info">
-                            <div class="file-name">原型生成 v2.0</div>
-                            <div class="file-version">版本 02 - 专业编辑器</div>
-                        </div>
-                    </div>
-                    <p class="file-desc">专业原型编辑器，集成墨刀/Figma设计理念</p>
-                    <span class="status-badge status-latest">推荐版本</span>
-                </a>
             </div>
         </div>
         
-        <!-- 其他页面 -->
+        <!-- 主页面版本 -->
         <div class="section">
-            <h2 class="section-title">其他功能页面</h2>
-            <div class="file-grid">
-                <a href="/prototype/index.html" class="file-card">
-                    <div class="file-header">
-                        <div class="file-icon">🚀</div>
-                        <div class="file-info">
-                            <div class="file-name">主功能页面</div>
-                            <div class="file-version">9大核心功能</div>
+            <h2 class="section-title">主页面版本</h2>
+            <div class="version-grid">
+                <a href="/prototype/index.html" class="version-card">
+                    <div class="version-header">
+                        <div class="version-icon">🚀</div>
+                        <div class="version-info">
+                            <div class="version-name">主页面 v1.0</div>
+                            <div class="version-number">版本 01 - 9大功能</div>
                         </div>
                     </div>
-                    <p class="file-desc">One-Click Dev 9大核心功能展示页面</p>
+                    <p class="version-desc">One-Click Dev 9大核心功能展示页面</p>
+                    <span class="status-badge status-latest">最新版本</span>
                 </a>
                 
-                <a href="/verify-paths.html" class="file-card">
-                    <div class="file-header">
-                        <div class="file-icon">🔗</div>
-                        <div class="file-info">
-                            <div class="file-name">链接测试</div>
-                            <div class="file-version">路径验证工具</div>
+                <a href="/index-01.html" class="version-card">
+                    <div class="version-header">
+                        <div class="version-icon">📁</div>
+                        <div class="version-info">
+                            <div class="version-name">文件管理 v1.0</div>
+                            <div class="version-number">版本 01 - 文件管理</div>
                         </div>
                     </div>
-                    <p class="file-desc">测试所有页面链接的可访问性</p>
+                    <p class="version-desc">文件版本管理页面，清晰展示所有版本</p>
+                    <span class="status-badge status-archived">归档版本</span>
                 </a>
             </div>
         </div>
         
         <div style="margin-top: 40px; padding: 20px; background: #f3f4f6; border-radius: 8px;">
-            <h3 style="margin-bottom: 12px; font-size: 1rem; font-weight: 600;">文件管理规范</h3>
-            <ul style="color: var(--text-light); font-size: 0.875rem; line-height: 1.6;">
-                <li>所有文件按功能分类：需求分析、原型生成、界面生成等</li>
-                <li>版本号使用 01、02、03 后缀区分迭代版本</li>
-                <li>最新版本标记为"最新版本"，旧版本标记为"归档版本"</li>
-                <li>删除重复和测试文件，保持目录整洁</li>
-                <li>所有页面通过此管理页面统一访问</li>
-            </ul>
+            <h3 style="margin-bottom: 12px; font-size: 1rem; font-weight: 600;">📁 文件结构说明</h3>
+            <pre style="background: white; padding: 16px; border-radius: 8px; font-size: 0.75rem; overflow: auto;">
+根目录/
+├── index.html                    # 当前页面（版本管理）
+├── index-01.html                 # 文件管理 v1.0（归档）
+├── requirement/                  # 需求分析页面
+│   └── requirement-01.html       # 需求分析 v1.0
+├── prototype/                    # 原型相关页面
+│   ├── prototype-01.html         # 一键原型 v1.0（最新）
+│   ├── index.html                # 主页面 v1.0（9大功能）
+│   └── edit/                     # 原型编辑器
+│       └── edit-01.html          # 原型编辑器 v1.0
+└── 其他文件（vercel.json等）</pre>
+            
+            <div style="margin-top: 16px; font-size: 0.875rem; color: var(--text-light);">
+                <p><strong>使用流程：</strong></p>
+                <ol style="margin-left: 20px; line-height: 1.6;">
+                    <li>从"最新推荐版本"访问主页面</li>
+                    <li>在主页面点击"一键需求分析" → 需求工作流Agent（最新）</li>
+                    <li>在主页面点击"一键原型生成" → 原型预览页面</li>
+                    <li>在原型预览页面点击"最大化" → 进入原型编辑器</li>
+                </ol>
+            </div>
         </div>
     </div>
 </body>

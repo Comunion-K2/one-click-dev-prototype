@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一键原型生成 | One-Click Dev</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --ai: #8b5cf6;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; line-height: 1.6; color: var(--gray-800); background: #f9fafb; }
+        
+        .editor-header {
+            background: white;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .editor-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .editor-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e5e7eb;
+            overflow-y: auto;
+        }
+        
+        .sidebar-section {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .project-list, .page-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .project-item, .page-item {
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .project-item:hover, .page-item:hover {
+            background: var(--gray-100);
+        }
+        
+        .project-item.active, .page-item.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            overflow: auto;
+        }
+        
+        .mobile-canvas {
+            width: 375px;
+            height: 667px;
+            background: white;
+            border: 2px solid var(--gray-800);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin: 0 auto;
+        }
+        
+        .canvas-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #9ca3af;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .component-panel {
+            width: 240px;
+            background: white;
+            border-left: 1px solid #e5e7eb;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .component-category {
+            margin-bottom: 24px;
+        }
+        
+        .category-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--gray-800);
+        }
+        
+        .component-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .component-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: var(--gray-100);
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .component-item:hover {
+            background: #e5e7eb;
+            border-color: #d1d5db;
+        }
+        
+        .property-panel {
+            margin-top: 24px;
+        }
+        
+        .property-item {
+            margin-bottom: 20px;
+        }
+        
+        .property-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+        
+        .grayscale-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .grayscale-slider {
+            flex: 1;
+            height: 4px;
+            background: #d1d5db;
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .grayscale-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .grayscale-value {
+            min-width: 40px;
+            text-align: right;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: var(--gray-100);
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .toolbar {
+            padding: 12px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            gap: 12px;
+        }
+        
+        .tool-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .tool-btn:hover {
+            background: var(--gray-100);
+        }
+        
+        .tool-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <header class="editor-header">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>返回功能列表</span>
+        </a>
+        <div class="editor-title">一键原型生成</div>
+        <div style="width: 100px;"></div> <!-- 占位 -->
+    </header>
+    
+    <div class="editor-container">
+        <!-- 左侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-folder"></i>
+                    <span>项目</span>
+                </div>
+                <div class="project-list">
+                    <div class="project-item active">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>电商APP</span>
+                    </div>
+                    <div class="project-item">
+                        <i class="fas fa-plus"></i>
+                        <span>新建项目</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-code-branch"></i>
+                    <span>版本: v1.0.3</span>
+                </div>
+                <div class="page-list">
+                    <div class="page-item active">
+                        <i class="far fa-file"></i>
+                        <span>购物车页面</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>结算页面</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>搜索页面</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>登录页面</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar-section">
+                <div class="section-title">
+                    <i class="fas fa-layer-group"></i>
+                    <span>所有页面</span>
+                </div>
+                <div class="page-list">
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>首页</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>商品列表</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>商品详情</span>
+                    </div>
+                    <div class="page-item">
+                        <i class="far fa-file"></i>
+                        <span>个人中心</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <div class="toolbar">
+                <button class="tool-btn">
+                    <i class="fas fa-save"></i>
+                    <span>保存</span>
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-undo"></i>
+                    <span>撤销</span>
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-redo"></i>
+                    <span>重做</span>
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-trash"></i>
+                    <span>清空</span>
+                </button>
+                <button class="tool-btn primary">
+                    <i class="fas fa-play"></i>
+                    <span>预览</span>
+                </button>
+            </div>
+            
+            <div class="canvas-container">
+                <!-- 移动端画布 -->
+                <div class="mobile-canvas" id="mobileCanvas">
+                    <div class="canvas-placeholder">
+                        <i class="fas fa-arrow-left" style="font-size: 3rem; opacity: 0.3; margin-bottom: 20px;"></i>
+                        <p>从右侧组件库拖拽组件到此处</p>
+                        <p>或点击组件快速添加</p>
+                    </div>
+                </div>
+                
+                <!-- 组件面板 -->
+                <div class="component-panel">
+                    <div class="component-category">
+                        <div class="category-title">基础组件</div>
+                        <div class="component-list">
+                            <div class="component-item" data-type="rectangle">
+                                <i class="fas fa-square"></i>
+                                <span>矩形</span>
+                            </div>
+                            <div class="component-item" data-type="text">
+                                <i class="fas fa-font"></i>
+                                <span>文本</span>
+                            </div>
+                            <div class="component-item" data-type="icon">
+                                <i class="fas fa-icons"></i>
+                                <span>图标</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component-category">
+                        <div class="category-title">属性面板</div>
+                        <div class="property-panel">
+                            <div class="property-item">
+                                <label class="property-label">灰度调节</label>
+                                <div class="grayscale-control">
+                                    <input type="range" class="grayscale-slider" id="grayscaleSlider" min="0" max="100" value="0">
+                                    <span class="grayscale-value" id="grayscaleValue">0%</span>
+                                </div>
+                            </div>
+                            
+                            <div class="property-item">
+                                <label class="property-label">边框粗细</label>
+                                <div class="btn-group">
+                                    <button class="btn" data-size="1">细</button>
+                                    <button class="btn active" data-size="2">中</button>
+                                    <button class="btn" data-size="3">粗</button>
+                                </div>
+                            </div>
+                            
+                            <div class="property-item">
+                                <label class="property-label">圆角</label>
+                                <div class="btn-group">
+                                    <button class="btn" data-radius="0">直角</button>
+                                    <button class="btn active" data-radius="8">圆角</button>
+                                    <button class="btn" data-radius="20">大圆角</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 简单的交互逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            const grayscaleSlider = document.getElementById('grayscaleSlider');
+            const grayscaleValue = document.getElementById('grayscaleValue');
+            
+            // 灰度调节
+            grayscaleSlider.addEventListener('input', function() {
+                grayscaleValue.textContent = `${this.value}%`;
+            });
+            
+            // 边框按钮
+            document.querySelectorAll('.btn[data-size]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.btn[data-size]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 圆角按钮
+            document.querySelectorAll('.btn[data-radius]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.btn[data-radius]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 组件点击
+            document.querySelectorAll('.component-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const type = this.dataset.type;
+                    alert(`添加 ${type} 组件\n完整交互功能将在后续版本中实现`);
+                });
+            });
+            
+            // 页面点击
+            document.querySelectorAll('.page-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.page-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // 工具栏按钮
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const text = this.querySelector('span').textContent;
+                    if (text === '保存') {
+                        alert('原型已保存到本地');
+                    } else if (text === '预览') {
+                        alert('预览功能将在后续版本中实现');
+                    } else if (text === '清空') {
+                        if (confirm('确定要清空画布吗？')) {
+                            alert('画布已清空');
+                        }
+                    } else {
+                        alert(`${text}功能将在后续版本中实现`);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -3,304 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一键生成原型产品 | One-Click Dev</title>
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>One-Click Dev - AI原生一键开发平台</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --ai: #8b5cf6;
+            --gray-100: #f3f4f6;
+            --gray-800: #1f2937;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; line-height: 1.6; color: var(--gray-800); background: #f9fafb; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        .navbar { background: white; padding: 16px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .logo { font-size: 1.25rem; font-weight: bold; color: var(--primary); text-decoration: none; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-link { color: #6b7280; text-decoration: none; font-weight: 500; }
+        .nav-link:hover { color: var(--primary); }
+        
+        .hero { padding: 100px 0; text-align: center; }
+        .hero-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 20px; background: linear-gradient(135deg, var(--primary), var(--ai)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-subtitle { font-size: 1.25rem; color: #6b7280; max-width: 600px; margin: 0 auto 40px; }
+        
+        .features { padding: 80px 0; }
+        .section-title { text-align: center; font-size: 2.5rem; margin-bottom: 20px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .feature-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+        .feature-icon { width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--ai)); border-radius: 12px; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; }
+        .feature-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 15px; }
+        .feature-desc { color: #6b7280; font-size: 0.95rem; }
+        
+        .btn { background: var(--primary); color: white; border: none; padding: 12px 32px; border-radius: 8px; font-size: 1rem; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #2563eb; }
+        
+        .cta-section { text-align: center; padding: 60px 0; }
+        
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .features-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- 头部导航栏 -->
-        <header class="app-header">
-            <div class="header-left">
-                <div class="logo">
-                    <i class="fas fa-cube"></i>
-                    <span>原型生成器</span>
-                </div>
-                <div class="project-info">
-                    <span class="project-name">电商APP</span>
-                    <span class="version-badge">v1.0.3</span>
-                </div>
+    <nav class="navbar">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <a href="#" class="logo">One-Click Dev</a>
+            <div class="nav-links">
+                <a href="#" class="nav-link">首页</a>
+                <a href="#features" class="nav-link">功能</a>
+                <a href="#" class="nav-link">文档</a>
+                <a href="#" class="nav-link">关于</a>
             </div>
-            <div class="header-right">
-                <button class="header-btn">
-                    <i class="fas fa-save"></i>
-                    <span>保存</span>
-                </button>
-                <button class="header-btn primary">
-                    <i class="fas fa-play"></i>
-                    <span>预览</span>
-                </button>
-                <div class="user-avatar">
-                    <i class="fas fa-user"></i>
-                </div>
-            </div>
-        </header>
-
-        <div class="main-content">
-            <!-- 左侧边栏 -->
-            <aside class="left-sidebar">
-                <div class="sidebar-section">
-                    <div class="section-header">
-                        <i class="fas fa-folder"></i>
-                        <span>项目</span>
-                    </div>
-                    <div class="project-list">
-                        <div class="project-item active">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>电商APP</span>
-                        </div>
-                        <div class="project-item">
-                            <i class="fas fa-plus"></i>
-                            <span>新建项目</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="section-header">
-                        <i class="fas fa-code-branch"></i>
-                        <span>版本: v1.0.3</span>
-                    </div>
-                    <div class="demand-list">
-                        <div class="demand-item">
-                            <div class="demand-header">
-                                <i class="fas fa-chevron-right"></i>
-                                <span>需求A: 购物车优化</span>
-                            </div>
-                            <div class="page-list">
-                                <div class="page-item active">
-                                    <i class="far fa-file"></i>
-                                    <span>购物车页面</span>
-                                </div>
-                                <div class="page-item">
-                                    <i class="far fa-file"></i>
-                                    <span>结算页面</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="demand-item">
-                            <div class="demand-header">
-                                <i class="fas fa-chevron-right"></i>
-                                <span>需求B: 搜索功能优化</span>
-                            </div>
-                            <div class="page-list">
-                                <div class="page-item">
-                                    <i class="far fa-file"></i>
-                                    <span>搜索页面</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="demand-item">
-                            <div class="demand-header">
-                                <i class="fas fa-chevron-right"></i>
-                                <span>需求C: 用户登录优化</span>
-                            </div>
-                            <div class="page-list">
-                                <div class="page-item">
-                                    <i class="far fa-file"></i>
-                                    <span>登录页面</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sidebar-section">
-                    <div class="section-header">
-                        <i class="fas fa-layer-group"></i>
-                        <span>所有页面</span>
-                    </div>
-                    <div class="all-pages-list">
-                        <div class="page-item">
-                            <i class="far fa-file"></i>
-                            <span>购物车页面</span>
-                        </div>
-                        <div class="page-item">
-                            <i class="far fa-file"></i>
-                            <span>结算页面</span>
-                        </div>
-                        <div class="page-item">
-                            <i class="far fa-file"></i>
-                            <span>搜索页面</span>
-                        </div>
-                        <div class="page-item">
-                            <i class="far fa-file"></i>
-                            <span>登录页面</span>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- 主内容区 -->
-            <main class="content-area">
-                <!-- 原型画布区域 -->
-                <div class="prototype-section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <i class="fas fa-mobile-alt"></i>
-                            <span>原型画布</span>
-                            <span class="canvas-size">375×667</span>
-                        </div>
-                        <div class="section-actions">
-                            <button class="action-btn">
-                                <i class="fas fa-undo"></i>
-                                <span>撤销</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="fas fa-redo"></i>
-                                <span>重做</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="fas fa-trash"></i>
-                                <span>清空</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="prototype-canvas-container">
-                        <!-- 移动端画布 -->
-                        <div class="mobile-canvas" id="mobileCanvas">
-                            <!-- 这里将通过JavaScript动态添加组件 -->
-                            <div class="canvas-placeholder">
-                                <i class="fas fa-arrow-left"></i>
-                                <p>从左侧组件库拖拽组件到此处</p>
-                                <p>或点击下方组件快速添加</p>
-                            </div>
-                        </div>
-                        
-                        <!-- 组件库 -->
-                        <div class="component-library">
-                            <div class="component-category">
-                                <div class="category-title">基础组件</div>
-                                <div class="component-list">
-                                    <div class="component-item" data-type="rectangle">
-                                        <i class="fas fa-square"></i>
-                                        <span>矩形</span>
-                                    </div>
-                                    <div class="component-item" data-type="text">
-                                        <i class="fas fa-font"></i>
-                                        <span>文本</span>
-                                    </div>
-                                    <div class="component-item" data-type="icon">
-                                        <i class="fas fa-icons"></i>
-                                        <span>图标</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="component-category">
-                                <div class="category-title">属性面板</div>
-                                <div class="property-panel">
-                                    <div class="property-item">
-                                        <label>灰度调节</label>
-                                        <div class="grayscale-control">
-                                            <input type="range" id="grayscaleSlider" min="0" max="100" value="0">
-                                            <span id="grayscaleValue">0%</span>
-                                        </div>
-                                    </div>
-                                    <div class="property-item">
-                                        <label>边框粗细</label>
-                                        <div class="border-control">
-                                            <button class="border-btn" data-size="1">细</button>
-                                            <button class="border-btn active" data-size="2">中</button>
-                                            <button class="border-btn" data-size="3">粗</button>
-                                        </div>
-                                    </div>
-                                    <div class="property-item">
-                                        <label>圆角</label>
-                                        <div class="radius-control">
-                                            <button class="radius-btn" data-radius="0">直角</button>
-                                            <button class="radius-btn active" data-radius="8">圆角</button>
-                                            <button class="radius-btn" data-radius="20">大圆角</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 需求文档区域 -->
-                <div class="document-section">
-                    <div class="section-header">
-                        <div class="section-title">
-                            <i class="fas fa-file-alt"></i>
-                            <span>需求文档</span>
-                        </div>
-                        <div class="section-actions">
-                            <button class="action-btn">
-                                <i class="fas fa-expand"></i>
-                                <span>最大化</span>
-                            </button>
-                            <button class="action-btn">
-                                <i class="fas fa-download"></i>
-                                <span>导出</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="document-editor">
-                        <div class="editor-toolbar">
-                            <button class="tool-btn"><i class="fas fa-bold"></i></button>
-                            <button class="tool-btn"><i class="fas fa-italic"></i></button>
-                            <button class="tool-btn"><i class="fas fa-list-ul"></i></button>
-                            <button class="tool-btn"><i class="fas fa-list-ol"></i></button>
-                            <button class="tool-btn"><i class="fas fa-link"></i></button>
-                            <button class="tool-btn"><i class="fas fa-image"></i></button>
-                        </div>
-                        <textarea class="markdown-editor" id="demandEditor" placeholder="在此处编辑需求文档...">
-# 购物车页面优化需求
-
-## 需求背景
-用户反馈购物车操作不够便捷，特别是在批量操作和价格计算方面。
-
-## 用户痛点
-1. 无法批量选择商品
-2. 价格计算不实时
-3. 优惠券使用不直观
-
-## 解决方案
-1. 添加全选/反选功能
-2. 实时计算总价
-3. 优化优惠券展示
-
-## 页面元素
-- 商品列表（可勾选）
-- 价格汇总区域
-- 优惠券选择器
-- 结算按钮
-
-## 交互说明
-1. 勾选商品时实时更新总价
-2. 点击优惠券展开选择面板
-3. 结算按钮根据选中状态变化
-                        </textarea>
-                    </div>
-                </div>
-            </main>
         </div>
+    </nav>
 
-        <!-- 底部状态栏 -->
-        <footer class="app-footer">
-            <div class="footer-left">
-                <span class="status-item">
-                    <i class="fas fa-layer-group"></i>
-                    <span>组件数: <span id="componentCount">0</span></span>
-                </span>
-                <span class="status-item">
-                    <i class="fas fa-clock"></i>
-                    <span>最后保存: 刚刚</span>
-                </span>
-            </div>
-            <div class="footer-right">
-                <span class="hint-text">
-                    <i class="fas fa-lightbulb"></i>
-                    <span>提示: 使用拖拽方式添加组件，右键点击编辑属性</span>
-                </span>
-            </div>
-        </footer>
-    </div>
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">AI原生一键开发平台</h1>
+            <p class="hero-subtitle">从需求到原型，从设计到代码，AI驱动的一站式开发解决方案。专为产品经理、设计师和开发者打造。</p>
+            <a href="#features" class="btn">探索功能</a>
+        </div>
+    </section>
 
-    <script src="../js/prototype.js"></script>
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">9大核心功能</h2>
+            <p style="text-align: center; color: #6b7280; margin-bottom: 40px;">点击功能卡片进入对应原型</p>
+            
+            <div class="features-grid">
+                <!-- 功能1：一键需求分析 -->
+                <div class="feature-card" onclick="window.location.href='pages/demand-system-pro.html'">
+                    <div class="feature-icon">📋</div>
+                    <h3 class="feature-title">一键需求分析</h3>
+                    <p class="feature-desc">AI智能分析需求，生成完整的需求文档和用户故事</p>
+                </div>
+                
+                <!-- 功能2：一键界面生成 -->
+                <div class="feature-card" onclick="window.location.href='pages/ui-generation.html'">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">一键界面生成</h3>
+                    <p class="feature-desc">根据需求自动生成美观的UI界面设计</p>
+                </div>
+                
+                <!-- 功能3：一键代码生成 -->
+                <div class="feature-card" onclick="window.location.href='pages/code-generation.html'">
+                    <div class="feature-icon">💻</div>
+                    <h3 class="feature-title">一键代码生成</h3>
+                    <p class="feature-desc">从设计到代码，自动生成前端和后端代码</p>
+                </div>
+                
+                <!-- 功能4：一键API生成 -->
+                <div class="feature-card" onclick="window.location.href='pages/api-generation.html'">
+                    <div class="feature-icon">🔌</div>
+                    <h3 class="feature-title">一键API生成</h3>
+                    <p class="feature-desc">自动生成RESTful API接口和文档</p>
+                </div>
+                
+                <!-- 功能5：一键数据库设计 -->
+                <div class="feature-card" onclick="window.location.href='pages/database-design.html'">
+                    <div class="feature-icon">🗄️</div>
+                    <h3 class="feature-title">一键数据库设计</h3>
+                    <p class="feature-desc">智能数据库架构设计和SQL生成</p>
+                </div>
+                
+                <!-- 功能6：一键部署 -->
+                <div class="feature-card" onclick="window.location.href='pages/deployment.html'">
+                    <div class="feature-icon">🚀</div>
+                    <h3 class="feature-title">一键部署</h3>
+                    <p class="feature-desc">自动化部署到云平台，支持Vercel、AWS等</p>
+                </div>
+                
+                <!-- 功能7：一键测试生成 -->
+                <div class="feature-card" onclick="window.location.href='pages/test-generation.html'">
+                    <div class="feature-icon">🧪</div>
+                    <h3 class="feature-title">一键测试生成</h3>
+                    <p class="feature-desc">自动生成单元测试和集成测试用例</p>
+                </div>
+                
+                <!-- 功能8：一键文档生成 -->
+                <div class="feature-card" onclick="window.location.href='pages/documentation.html'">
+                    <div class="feature-icon">📚</div>
+                    <h3 class="feature-title">一键文档生成</h3>
+                    <p class="feature-desc">自动生成API文档、用户手册和技术文档</p>
+                </div>
+                
+                <!-- 功能9：需求工作流Agent -->
+                <div class="feature-card" onclick="window.location.href='pages/demand-system-pro.html'">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">需求工作流Agent</h3>
+                    <p class="feature-desc">AI驱动的产品需求管理系统</p>
+                </div>
+                
+                <!-- 功能10：一键原型生成（新增） -->
+                <div class="feature-card" onclick="window.location.href='prototype-editor.html'">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">一键原型生成</h3>
+                    <p class="feature-desc">专业的产品经理线框原型设计工具</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <h2 style="font-size: 2rem; margin-bottom: 20px;">开始你的AI开发之旅</h2>
+            <p style="color: #6b7280; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                从想法到产品，只需几次点击。One-Click Dev让开发变得简单高效。
+            </p>
+            <a href="#" class="btn">立即开始免费试用</a>
+        </div>
+    </section>
+
+    <footer style="background: var(--gray-800); color: white; padding: 40px 0; text-align: center;">
+        <div class="container">
+            <p>© 2026 One-Click Dev. All rights reserved.</p>
+            <p style="color: #9ca3af; margin-top: 10px; font-size: 0.875rem;">
+                AI驱动的下一代开发平台
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // 功能卡片点击效果
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // 添加点击反馈
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
 </body>
 </html>

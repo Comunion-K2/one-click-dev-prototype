@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原型生成 v1.0 | One-Click Dev</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: var(--surface); color: var(--text); }
+        
+        .app-header {
+            height: 60px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .version-badge {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .main-container {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+        
+        .left-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid var(--border);
+            padding: 20px;
+        }
+        
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .component-item {
+            padding: 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            text-align: center;
+            cursor: grab;
+        }
+        
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f1f5f9;
+        }
+        
+        .canvas-header {
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+        
+        .mobile-frame {
+            width: 375px;
+            height: 667px;
+            background: white;
+            border: 2px solid var(--text);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .properties-panel {
+            width: 280px;
+            background: white;
+            border-left: 1px solid var(--border);
+            padding: 20px;
+        }
+        
+        .property-group {
+            margin-bottom: 20px;
+        }
+        
+        .property-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .property-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <a href="/index.html" class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>返回文件管理</span>
+        </a>
+        
+        <div class="app-title">原型生成 v1.0</div>
+        
+        <div class="version-badge">基础编辑器</div>
+    </header>
+    
+    <div class="main-container">
+        <aside class="left-sidebar">
+            <h3 style="margin-bottom: 16px; font-weight: 600;">组件库</h3>
+            <div class="components-grid">
+                <div class="component-item" draggable="true">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">📦</div>
+                    <div style="font-size: 0.75rem;">容器</div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">📝</div>
+                    <div style="font-size: 0.75rem;">文本</div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">🖼️</div>
+                    <div style="font-size: 0.75rem;">图片</div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">🔘</div>
+                    <div style="font-size: 0.75rem;">按钮</div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">📋</div>
+                    <div style="font-size: 0.75rem;">表单</div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div style="font-size: 1.5rem; margin-bottom: 8px;">📊</div>
+                    <div style="font-size: 0.75rem;">图表</div>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="canvas-area">
+            <div class="canvas-header">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <span style="font-weight: 600;">画布</span>
+                    <span style="font-size: 0.875rem; color: var(--text-light);">375×667 移动端</span>
+                </div>
+            </div>
+            
+            <div class="canvas-container">
+                <div class="mobile-frame">
+                    <div style="position: absolute; top: 20px; left: 0; right: 0; bottom: 0; padding: 20px; overflow: auto;">
+                        <div style="text-align: center; color: var(--text-light); padding: 40px;">
+                            <div style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;">📱</div>
+                            <p>拖拽左侧组件到此处</p>
+                            <p style="font-size: 0.75rem; margin-top: 10px;">支持移动端原型设计</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <aside class="properties-panel">
+            <h3 style="margin-bottom: 16px; font-weight: 600;">属性面板</h3>
+            
+            <div class="property-group">
+                <div class="property-label">尺寸</div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="number" class="property-input" placeholder="宽度" value="375" readonly>
+                    <input type="number" class="property-input" placeholder="高度" value="667" readonly>
+                </div>
+            </div>
+            
+            <div class="property-group">
+                <div class="property-label">背景色</div>
+                <input type="color" class="property-input" value="#ffffff">
+            </div>
+            
+            <div class="property-group">
+                <div class="property-label">圆角</div>
+                <input type="range" class="property-input" min="0" max="24" value="0">
+            </div>
+            
+            <div class="property-group">
+                <div class="property-label">边框</div>
+                <select class="property-input">
+                    <option>无边框</option>
+                    <option>实线边框</option>
+                    <option>虚线边框</option>
+                </select>
+            </div>
+            
+            <div class="property-group">
+                <div class="property-label">阴影</div>
+                <select class="property-input">
+                    <option>无阴影</option>
+                    <option>小阴影</option>
+                    <option>中阴影</option>
+                    <option>大阴影</option>
+                </select>
+            </div>
+        </aside>
+    </div>
+    
+    <script>
+        // 简单的拖拽功能
+        document.querySelectorAll('.component-item').forEach(item => {
+            item.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', this.querySelector('div:last-child').textContent);
+            });
+        });
+        
+        const canvas = document.querySelector('.mobile-frame > div');
+        canvas.addEventListener('dragover', function(e) {
+            e.preventDefault();
+        });
+        
+        canvas.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const componentType = e.dataTransfer.getData('text/plain');
+            
+            const component = document.createElement('div');
+            component.style.cssText = `
+                padding: 20px;
+                background: white;
+                border: 1px dashed #ccc;
+                border-radius: 8px;
+                margin-bottom: 10px;
+                text-align: center;
+            `;
+            component.innerHTML = `
+                <div style="font-size: 1.5rem; margin-bottom: 8px;">${getComponentIcon(componentType)}</div>
+                <div>${componentType}组件</div>
+            `;
+            
+            this.appendChild(component);
+        });
+        
+        function getComponentIcon(type) {
+            const icons = {
+                '容器': '📦',
+                '文本': '📝',
+                '图片': '🖼️',
+                '按钮': '🔘',
+                '表单': '📋',
+                '图表': '📊'
+            };
+            return icons[type] || '📦';
+        }
+    </script>
+</body>
+</html>

@@ -3,77 +3,192 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>One-Click Dev 重定向</title>
-    <meta http-equiv="refresh" content="0; url=/prototype/index.html">
+    <title>One-Click Dev | 文件管理</title>
     <style>
-        body { 
-            font-family: -apple-system, sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-align: center;
+        :root {
+            --primary: #3b82f6;
+            --surface: #f8fafc;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-light: #64748b;
         }
-        .container { max-width: 600px; padding: 40px; }
-        h1 { font-size: 2.5rem; margin-bottom: 20px; }
-        p { font-size: 1.125rem; margin-bottom: 30px; opacity: 0.9; }
-        .links { display: flex; flex-direction: column; gap: 15px; margin-top: 30px; }
-        .link { 
-            padding: 15px 25px; 
-            background: rgba(255,255,255,0.1); 
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 10px; 
-            color: white; 
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, sans-serif; background: var(--surface); color: var(--text); }
+        
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        
+        .header { text-align: center; margin-bottom: 40px; }
+        .title { font-size: 2.5rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+        .subtitle { font-size: 1.125rem; color: var(--text-light); }
+        
+        .section { margin-bottom: 40px; }
+        .section-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: var(--text); }
+        
+        .file-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .file-card { 
+            background: white; 
+            padding: 24px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .file-card:hover { 
+            border-color: var(--primary); 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+        
+        .file-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .file-icon { width: 40px; height: 40px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; }
+        .file-info { flex: 1; }
+        .file-name { font-weight: 600; margin-bottom: 4px; }
+        .file-version { font-size: 0.875rem; color: var(--text-light); }
+        
+        .file-desc { font-size: 0.875rem; color: var(--text-light); line-height: 1.5; }
+        
+        .status-badge { 
+            display: inline-block; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 0.75rem; 
+            font-weight: 500; 
+            margin-top: 12px;
+        }
+        .status-latest { background: #d1fae5; color: #065f46; }
+        .status-archived { background: #f3f4f6; color: #6b7280; }
+        
+        .back-btn { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            color: var(--primary); 
             text-decoration: none; 
             font-weight: 500;
-            transition: all 0.3s;
+            margin-bottom: 20px;
         }
-        .link:hover { 
-            background: rgba(255,255,255,0.2); 
-            transform: translateY(-2px);
-        }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid rgba(255,255,255,0.3);
-            border-top: 4px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 30px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        
+        @media (max-width: 768px) {
+            .file-grid { grid-template-columns: 1fr; }
+            .title { font-size: 2rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>One-Click Dev</h1>
-        <p>AI原生一键开发平台</p>
+        <a href="https://one-click-dev-prototype.vercel.app/prototype/index.html" class="back-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M10 4L6 8L10 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>返回功能列表</span>
+        </a>
         
-        <div class="spinner"></div>
-        <p>正在跳转到主页面...</p>
+        <div class="header">
+            <h1 class="title">One-Click Dev 文件管理</h1>
+            <p class="subtitle">清晰的文件版本管理，避免重复和混乱</p>
+        </div>
         
-        <div class="links">
-            <a href="/prototype/index.html" class="link">主页面（9大功能）</a>
-            <a href="/pages/demand-system-pro.html" class="link">一键需求分析</a>
-            <a href="/prototype-preview.html" class="link">原型预览页面</a>
-            <a href="/prototype-editor.html" class="link">原型编辑器</a>
-            <a href="/test-all-links.html" class="link">链接测试页面</a>
+        <!-- 需求分析页面 -->
+        <div class="section">
+            <h2 class="section-title">一键需求分析</h2>
+            <div class="file-grid">
+                <a href="/pages/demand-analysis-01.html" class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">📋</div>
+                        <div class="file-info">
+                            <div class="file-name">需求分析 v1.0</div>
+                            <div class="file-version">版本 01 - 独立页面</div>
+                        </div>
+                    </div>
+                    <p class="file-desc">独立原型页面，左侧导航 + 中间原型 + 右边PRD文档</p>
+                    <span class="status-badge status-latest">最新版本</span>
+                </a>
+                
+                <a href="/pages/demand-analysis-02.html" class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">🤖</div>
+                        <div class="file-info">
+                            <div class="file-name">需求分析 v2.0</div>
+                            <div class="file-version">版本 02 - 增强编辑器</div>
+                        </div>
+                    </div>
+                    <p class="file-desc">增强版原型编辑器，集成TDesign和AI生成功能</p>
+                    <span class="status-badge status-archived">开发中</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 原型生成页面 -->
+        <div class="section">
+            <h2 class="section-title">一键原型生成</h2>
+            <div class="file-grid">
+                <a href="/pages/prototype-01.html" class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">📱</div>
+                        <div class="file-info">
+                            <div class="file-name">原型生成 v1.0</div>
+                            <div class="file-version">版本 01 - 基础编辑器</div>
+                        </div>
+                    </div>
+                    <p class="file-desc">基础原型编辑器，支持拖拽组件和属性调整</p>
+                    <span class="status-badge status-archived">基础版本</span>
+                </a>
+                
+                <a href="/pages/prototype-02.html" class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">🎨</div>
+                        <div class="file-info">
+                            <div class="file-name">原型生成 v2.0</div>
+                            <div class="file-version">版本 02 - 专业编辑器</div>
+                        </div>
+                    </div>
+                    <p class="file-desc">专业原型编辑器，集成墨刀/Figma设计理念</p>
+                    <span class="status-badge status-latest">推荐版本</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 其他页面 -->
+        <div class="section">
+            <h2 class="section-title">其他功能页面</h2>
+            <div class="file-grid">
+                <a href="/prototype/index.html" class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">🚀</div>
+                        <div class="file-info">
+                            <div class="file-name">主功能页面</div>
+                            <div class="file-version">9大核心功能</div>
+                        </div>
+                    </div>
+                    <p class="file-desc">One-Click Dev 9大核心功能展示页面</p>
+                </a>
+                
+                <a href="/verify-paths.html" class="file-card">
+                    <div class="file-header">
+                        <div class="file-icon">🔗</div>
+                        <div class="file-info">
+                            <div class="file-name">链接测试</div>
+                            <div class="file-version">路径验证工具</div>
+                        </div>
+                    </div>
+                    <p class="file-desc">测试所有页面链接的可访问性</p>
+                </a>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #f3f4f6; border-radius: 8px;">
+            <h3 style="margin-bottom: 12px; font-size: 1rem; font-weight: 600;">文件管理规范</h3>
+            <ul style="color: var(--text-light); font-size: 0.875rem; line-height: 1.6;">
+                <li>所有文件按功能分类：需求分析、原型生成、界面生成等</li>
+                <li>版本号使用 01、02、03 后缀区分迭代版本</li>
+                <li>最新版本标记为"最新版本"，旧版本标记为"归档版本"</li>
+                <li>删除重复和测试文件，保持目录整洁</li>
+                <li>所有页面通过此管理页面统一访问</li>
+            </ul>
         </div>
     </div>
-    
-    <script>
-        // 如果3秒后还没跳转，显示手动跳转提示
-        setTimeout(() => {
-            document.querySelector('p:last-of-type').innerHTML = 
-                '如果页面没有自动跳转，请点击上面的链接';
-        }, 3000);
-    </script>
 </body>
 </html>

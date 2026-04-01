@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>原型生成 v2.0 | One-Click Dev</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --surface: #f8fafc;
+            --surface-dark: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --text-light: #64748b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--surface);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .app-header {
+            height: 64px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .app-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .version-badge {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .header-btn {
+            padding: 8px 16px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header-btn.primary {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* AI生成面板 */
+        .ai-panel {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .ai-panel.active {
+            display: block;
+        }
+        
+        .ai-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .ai-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .ai-content {
+            padding: 16px;
+        }
+        
+        .ai-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-bottom: 12px;
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .ai-examples {
+            margin-top: 12px;
+        }
+        
+        .example-item {
+            padding: 8px 12px;
+            background: var(--surface);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        
+        .example-item:hover {
+            background: var(--primary-light);
+            color: white;
+        }
+        
+        /* 主布局 */
+        .main-container {
+            display: flex;
+            height: calc(100vh - 64px);
+        }
+        
+        /* 左侧工具栏 */
+        .left-toolbar {
+            width: 80px;
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .tool-group {
+            margin-bottom: 32px;
+            width: 100%;
+        }
+        
+        .tool-title {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 12px;
+            padding: 0 10px;
+        }
+        
+        .tool-btn {
+            width: 100%;
+            padding: 12px 0;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+        }
+        
+        .tool-btn:hover {
+            background: var(--surface);
+            color: var(--primary);
+        }
+        
+        .tool-btn.active {
+            color: var(--primary);
+            background: var(--surface);
+        }
+        
+        .tool-btn i {
+            font-size: 1.25rem;
+        }
+        
+        /* 组件库 */
+        .components-panel {
+            width: 320px;
+            background: white;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .components-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .components-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .components-search {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .components-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .component-category {
+            margin-bottom: 24px;
+        }
+        
+        .category-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .component-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: grab;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .component-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+        }
+        
+        .component-icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--text-light);
+        }
+        
+        .component-name {
+            font-size: 0.75rem;
+            color: var(--text);
+        }
+        
+        /* 画布区域 */
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+        
+        .canvas-header {
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .canvas-title {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .device-selector {
+            display: flex;
+            gap: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 4px;
+        }
+        
+        .device-btn {
+            padding: 6px 12px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        
+        .device-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .canvas-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow: auto;
+            position: relative;
+        }
+        
+        .mobile-frame {
+            width: 375px;
+            height: 667px;
+            background: white;
+            border: 2px solid var(--text);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .mobile-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 20px;
+            background: var(--text);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
+        }
+        
+        .canvas {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        .drop-zone {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light);
+            font-size: 0.875rem;
+            text-align: center;
+        }
+        
+        /* 属性面板 */
+        .properties-panel {
+            width: 320px;
+            background: white;
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .properties-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+        
+        .properties-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .property-group {
+            margin-bottom: 24px;
+        }
+        
+        .property-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
+        
+        .property-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+        
+        .color-picker {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .color-box {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+        
+        /* 画布组件 */
+        .canvas-component {
+            position: absolute;
+            border: 1px solid var(--border);
+            background: white;
+            cursor: move;
+            user-select: none;
+            padding: 12px;
+            border-radius: 8px;
+            min-width: 80px;
+            min-height: 40px;
+        }
+        
+        .canvas-component.selected {
+            border: 2px solid var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+        
+        .component-resize-handle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            bottom: -4px;
+            right: -4px;
+            cursor: nwse-resize;
+        }
+    </style>
+</head>
+<body>
+    <!-- 头部 -->
+    <header class="app-header">
+        <a href="/index.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            <span>返回文件管理</span>
+        </a>
+        
+        <div class="app-title">原型生成 v2.0</div>
+        
+        <div class="version-badge">专业编辑器</div>
+        
+        <div class="header-actions">
+            <button class="header-btn" id="aiGenerateBtn">
+                <i class="fas fa-robot"></i>
+                <span>AI生成</span>
+            </button>
+            <button class="header-btn primary" id="saveBtn">
+                <i class="fas fa-save"></i>
+                <span>保存</span>
+            </button>
+        </div>
+    </header>
+    
+    <!-- AI生成面板 -->
+    <div class="ai-panel" id="aiPanel">
+        <div class="ai-header">
+            <div class="ai-title">
+                <i class="fas fa-robot"></i>
+                <span>AI原型生成</span>
+            </div>
+            <button class="header-btn" id="closeAiBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="ai-content">
+            <textarea class="ai-input" placeholder="描述你想要的原型，例如：创建一个购物车页面，包含商品列表、价格汇总和结算按钮..."></textarea>
+            <button class="header-btn primary" style="width: 100%;">
+                <i class="fas fa-magic"></i>
+                <span>生成原型</span>
+            </button>
+            
+            <div class="ai-examples">
+                <div class="example-item">创建一个登录页面，包含用户名、密码输入框和登录按钮</div>
+                <div class="example-item">设计一个商品详情页，包含图片轮播、价格信息和购买按钮</div>
+                <div class="example-item">生成一个个人中心页面，包含头像、个人信息和设置选项</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主布局 -->
+    <div class="main-container">
+        <!-- 左侧工具栏 -->
+        <aside class="left-toolbar">
+            <div class="tool-group">
+                <div class="tool-title">工具</div>
+                <button class="tool-btn active">
+                    <i class="fas fa-mouse-pointer"></i>
+                    <span>选择</span>
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-vector-square"></i>
+                    <span>矩形</span>
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-font"></i>
+                    <span>文本</span>
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-image"></i>
+                    <span>图片</span>
+                </button>
+            </div>
+            
+            <div class="tool-group">
+                <div class="tool-title">视图</div>
+                <button class="tool-btn">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>移动端</span>
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-desktop"></i>
+                    <span>桌面端</span>
+                </button>
+                <button class="tool-btn">
+                    <i class="fas fa-tablet-alt"></i>
+                    <span>平板</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- 组件库 -->
+        <aside class="components-panel">
+            <div class="components-header">
+                <div class="components-title">TDesign组件库</div>
+                <input type="text" class="components-search" placeholder="搜索组件...">
+            </div>
+            <div class="components-content">
+                <div class="component-category">
+                    <div class="category-title">基础组件</div>
+                    <div class="component-grid">
+                        <div class="component-item" draggable="true">
+                            <div class="component-icon"><i class="fas fa-square"></i></div>
+                            <div class="component-name">按钮</div>
+                        </div>
+                        <div class="component-item" draggable="true">
+                            <div class="component-icon"><i class="fas fa-input-text"></i></div>
+                            <div class="component-name">输入框</div>
+                        </div>
+                        <div class="component-item" draggable="true">
+                            <div class="component-icon"><i class="fas fa-list"></i></div>
+                            <div class="component-name">列表</div>
+                        </div>
+                        <div class="component-item" draggable="true">
+                            <div class="component-icon"><i class="fas fa-table"></i></div>
+                            <div class="component-name">表格</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="component-category">
+                    <div class="category-title">导航组件</div>
+                    <div class="component-grid">
+                        <div class="component-item" draggable="true">
+                            <div class="component-icon"><i class="fas fa-b

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重定向到需求分析页面</title>
+    <meta http-equiv="refresh" content="0; url=/requirement/requirement-01.html">
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .container {
+            max-width: 600px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            font-size: 1.125rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            color: #3b82f6;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.125rem;
+            margin: 10px;
+            transition: all 0.3s;
+        }
+        
+        .link:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(255, 255, 255, 0.2);
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            margin-bottom: 12px;
+            font-size: 1.25rem;
+        }
+        
+        .info-box ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .info-box li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 页面已迁移</h1>
+        <p>需求分析页面已经迁移到新的位置，正在自动跳转...</p>
+        
+        <div class="spinner"></div>
+        
+        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 20px;">
+            <a href="/requirement/requirement-01.html" class="link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                基础需求分析 v1.0
+            </a>
+            
+            <a href="/prototype/prototype-01.html" class="link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                工作流Agent v2.0
+            </a>
+            
+            <a href="/index.html" class="link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                版本管理主页
+            </a>
+        </div>
+        
+        <div class="info-box">
+            <h3>📁 文件结构变更说明</h3>
+            <ul>
+                <li><strong>原路径</strong>: <code>/pages/demand-system-pro.html</code></li>
+                <li><strong>新路径</strong>: <code>/requirement/requirement-01.html</code></li>
+                <li><strong>变更原因</strong>: 文件重组，实现版本管理</li>
+                <li><strong>新增版本</strong>: 工作流Agent v2.0 (<code>/prototype/prototype-01.html</code>)</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // 如果3秒后还在这个页面，显示手动跳转提示
+        setTimeout(() => {
+            const manualRedirect = document.createElement('div');
+            manualRedirect.style.cssText = `
+                margin-top: 20px;
+                padding: 16px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 8px;
+                font-size: 0.875rem;
+            `;
+            manualRedirect.innerHTML = `
+                <p>自动跳转失败？请手动点击上面的链接。</p>
+                <p>或者 <a href="javascript:location.reload()" style="color: #93c5fd; text-decoration: underline;">刷新页面</a> 重试。</p>
+            `;
+            document.querySelector('.container').appendChild(manualRedirect);
+        }, 3000);
+        
+        console.log('🚀 需求分析页面重定向');
+        console.log('原路径: /pages/demand-system-pro.html');
+        console.log('新路径: /requirement/requirement-01.html');
+    </script>
+</body>
+</html>
